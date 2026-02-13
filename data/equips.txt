@@ -1,0 +1,2 @@
+# Equips guardats - Aquest fitxer es generarà automàticament
+# Format descrit a GestorFitxers.java

@@ -1,0 +1,28 @@
+{
+    "usuaris": [
+        {
+            "nomUsuari": "admin",
+            "contrasenya": "admin123",
+            "rol": "admin",
+            "nomComplet": "Administrador del Sistema"
+        },
+        {
+            "nomUsuari": "gestor1",
+            "contrasenya": "gestor123",
+            "rol": "gestor",
+            "nomComplet": "Joan García"
+        },
+        {
+            "nomUsuari": "gestor2",
+            "contrasenya": "gestor123",
+            "rol": "gestor",
+            "nomComplet": "Maria Pérez"
+        },
+        {
+            "nomUsuari": "gestor3",
+            "contrasenya": "gestor123",
+            "rol": "gestor",
+            "nomComplet": "Pau Martínez"
+        }
+    ]
+}
