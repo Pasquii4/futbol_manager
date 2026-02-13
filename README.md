@@ -1,212 +1,300 @@
-# ⚽ Politècnics Football Manager
+# ⚽ Football Manager - Advanced Edition
 
-Aplicació Java completa de gestió de futbol desenvolupada amb paradigma OOP (Object Oriented Programming). Simula un petit manager de futbol amb equips, jugadors, entrenadors, mercat de fitxatges i lligues.
+> Sistema de gestión de ligas de fútbol con motor de simulación avanzado, tácticas dinámicas y estadísticas exhaustivas.
 
-## 📋 Característiques
+[![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
+[![Status](https://img.shields.io/badge/Status-Ready-success.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.0-blue.svg)]()
 
-- **Dos rols d'usuari**: Admin i Gestor d'Equip
-- **Gestió completa d'equips**: Alta, baixa, modificació
-- **Mercat de fitxatges**: 30 jugadors i 10 entrenadors professionals
-- **Sistema de lligues**: Simulació de partits amb algoritme ponderat
-- **Persistència de dades**: Fitxers de text
-- **Entrenaments**: Millora de qualitat i motivació
-- **Transferències**: Moviment de jugadors entre equips
-- **Classificació dinàmica**: Ordenada per punts i diferència de gols
+---
 
-## 🏗️ Estructura del Projecte
+## 🚀 Inicio Rápido
 
-```
-futbol_manager/
-├── src/
-│   ├── model/
-│   │   ├── Persona.java          # Classe base abstracta
-│   │   ├── Jugador.java          # Classe jugador (hereta de Persona)
-│   │   ├── Entrenador.java       # Classe entrenador (hereta de Persona)
-│   │   ├── Equip.java            # Gestió d'equips
-│   │   ├── Lliga.java            # Sistema de lligues
-│   │   ├── Partit.java           # Simulació de partits
-│   │   └── DadesClassificacio.java  # Dades de classificació
-│   ├── comparators/
-│   │   ├── ComparadorJugadorQualitat.java  # Ordenació per qualitat
-│   │   └── ComparadorJugadorPosicio.java   # Ordenació per posició
-│   ├── utils/
-│   │   └── GestorFitxers.java    # Gestió de fitxers I/O
-│   └── Main.java                 # Classe principal amb menús
-├── data/
-│   ├── mercat_fitxatges.txt      # Jugadors i entrenadors disponibles
-│   └── equips.txt                # Equips guardats
-└── bin/                          # Classes compilades
-```
+```bash
+# 1. Compilar
+cd Java
+javac -d bin src/**/*.java
 
-## 🚀 Com Executar l'Aplicació
-
-### Prerequisits
-
-- Java JDK 8 o superior instal·lat
-- Configurar la variable d'entorn JAVA_HOME (opcional però recomanat)
-
-### Compilar
-
-Obre un terminal a la carpeta del projecte i executa:
-
-```powershell
-javac -d bin -sourcepath src -encoding UTF-8 src/Main.java
-```
-
-### Executar
-
-```powershell
+# 2. Ejecutar
 java -cp bin Main
 ```
 
-## 📖 Guia d'Ús
-
-### Menú de Login
-
-En iniciar l'aplicació, tria el teu rol:
-- **Admin**: Accés complet a totes les funcionalitats
-- **Gestor d'Equip**: Gestió d'equips específics
-
-### Menú Admin (8 opcions)
-
-1. **Veure classificació lliga actual** 🏆
-   - Mostra la taula de classificació ordenada
-
-2. **Donar d'alta equip**
-   - Crea nous equips amb dades completes
-
-3. **Donar d'alta jugador/a o entrenador/a**
-   - Afegeix persones al mercat de fitxatges
-
-4. **Consultar dades equip**
-   - Vista completa d'un equip
-
-5. **Consultar dades jugador/a equip**
-   - Informació detallada d'un jugador
-
-6. **Disputar nova lliga**
-   - Crea i simula una lliga completa
-
-7. **Realitzar sessió entrenament (mercat)**
-   - Entrena tots els jugadors/entrenadors del mercat
-
-8. **Desar dades equips**
-   - Guarda tots els equips en fitxer
-
-### Menú Gestor d'Equip (6 opcions)
-
-1. **Veure classificació lliga actual** 🏆
-2. **Gestionar el meu equip** ⚽ (submenu)
-3. **Consultar dades equip**
-4. **Consultar dades jugador/a equip**
-5. **Transferir jugador/a**
-6. **Desar dades equips**
-
-### Submenu Gestió d'Equip (4 opcions)
-
-1. **Donar de baixa l'equip**
-2. **Modificar president/a**
-3. **Destituir entrenador/a**
-4. **Fitxar jugador/a o entrenador/a**
-
-## 🎓 Conceptes OOP Implementats
-
-### Herència
-- `Persona` (classe base abstracta)
-  - `Jugador` (classe filla)
-  - `Entrenador` (classe filla)
-
-### Encapsulació
-- Tots els camps privats amb getters/setters
-- Camps finals (immutables): nom, cognom, dataNaixement
-
-### Polimorfisme
-- Sobreescriptura del mètode `entrenament()`
-- Sobreescriptura de `toString()`, `equals()`, `hashCode()`
-
-### Abstracció
-- Classe `Persona` abstracta
-- Interfície `Comparator` per als comparadors
-
-## 📊 Característiques Especials
-
-### Sistema de Punts
-- ✅ Victòria: 3 punts
-- 🤝 Empat: 1 punt
-- ❌ Derrota: 0 punts
-
-### Algoritme de Simulació de Partits
-
-```
-golsEquip = random(0-5) × (qualitat/100) × (motivació/10) × factor_aleatori(0.7-1.3)
-```
-
-### Entrenament de Jugadors
-- 70% probabilitat: +0.1 qualitat
-- 20% probabilitat: +0.2 qualitat
-- 10% probabilitat: +0.3 qualitat
-- Sempre: +0.2 motivació
-
-### Canvi de Posició (Jugadors)
-- 5% probabilitat per entrenament
-- Si canvia: +1.0 qualitat
-
-### Increment de Sou (Entrenadors)
-- +0.5% per entrenament
-
-## 📝 Format dels Fitxers de Dades
-
-### mercat_fitxatges.txt
-
-```
-JUGADOR|nom|cognom|dataNaixement|motivacio|sou|dorsal|posicio|qualitat
-ENTRENADOR|nom|cognom|dataNaixement|motivacio|sou|tornejos|seleccionador
-```
-
-### equips.txt
-
-```
-EQUIP|nom|any|ciutat|estadi|president
-ENTRENADOR|...
-JUGADOR|...
 ---
-```
 
-## 📚 Generar Documentació JavaDoc
+## 📋 Características Principales
 
-```powershell
-javadoc -d docs -sourcepath src -subpackages model:comparators:utils -encoding UTF-8
-```
+✅ **Sistema Táctico Completo**
+- 6 formaciones (4-4-2, 4-3-3, 3-5-2, 4-5-1, 5-3-2, 3-4-3)
+- 5 estilos de juego (Ultra Ofensivo → Ultra Defensivo)
+- Alineación automática con filtrado de lesionados y fatigados
+- Intensidad de presión configurable (1-10)
 
-Això crearà la documentació HTML a la carpeta `docs/`.
+✅ **Motor de Simulación Avanzado**
+- Distribución de **Poisson** para generación realista de goles
+- Asignación inteligente de goleadores (delanteros ×2.0 probabilidad)
+- 70% de goles con asistencia
+- Simulación de tarjetas (5% amarillas, 1% rojas)
+- Generación automática de eventos del partido
 
-## 🎯 Funcionalitats Destacades
+✅ **Gestión de Fatiga y Lesiones**
+- Fatiga 0-100 que afecta calidad efectiva
+- 4 tipos de lesiones (muscular, ósea, articular, leve)
+- Recuperación automática entre jornadas
 
-- ✅ Comptador estàtic de jugadors totals
-- ✅ Validació completa d'entrades d'usuari
-- ✅ Gestió d'errors robusta
-- ✅ Interfície amb emojis i taules formatades
-- ✅ Ordenació múltiple de jugadors
-- ✅ Persistència de dades entre sessions
+✅ **Estadísticas Exhaustivas**
+- Goles, asistencias, tarjetas por jugador
+- Rating dinámico calculado automáticamente
+- Estadísticas específicas de porteros
+- Mapa de goles por jornada
 
-## 👨‍💻 Tecnologies Utilitzades
+✅ **Rankings Automáticos**
+- Top 10 goleadores, asistentes, mejor rating
+- Mejor portero (menos goles/partido)
+- Jugadores más/menos disciplinados
 
-- **Java 8+**
-- **Collections Framework** (ArrayList, HashMap)
-- **Java Time API** (LocalDate)
-- **File I/O** (BufferedReader, PrintWriter)
-- **Comparators** (interfície Comparator)
+✅ **Historial de Partidos**
+- Registro completo con eventos detallados
+- Consultas por equipo, jornada o enfrentamiento
+- Eventos con emojis (⚽🟨🟥🎯)
 
-## 📄 Llicència
-
-Projecte educatiu - Politècnics (Primer any de Desenvolupament d'Aplicacions)
-
-## 🤝 Contribució
-
-Aquest és un projecte educatiu. Per a millores o suggeriments, contacta amb l'equip docent.
+✅ **Persistencia**
+- Guardado/carga con serialización Java
+- Sistema de backups automático
 
 ---
 
-**Versió**: 1.0  
-**Data**: Febrer 2026  
-**Autor**: Politècnics Football Manager Team
+## 📦 Estructura del Proyecto
+
+```
+Java/
+├── src/
+│   ├── model/                      # 20 clases del modelo
+│   │   ├── Jugador.java           # Con fatiga, lesiones, stats
+│   │   ├── Equip.java             # Con presupuesto y táctica
+│   │   ├── Partit.java            # Motor Poisson
+│   │   ├── Lliga.java             # Gestión completa
+│   │   ├── Formacion.java         # 6 formaciones
+│   │   ├── EstiloJoc.java         # 5 estilos
+│   │   ├── TacticaEquip.java      # Motor táctico
+│   │   ├── EstadisticasJugador.java
+│   │   ├── RankingsLliga.java
+│   │   └── ... (11 clases más)
+│   │
+│   ├── persistence/               # Persistencia
+│   │   └── SimpleDatabaseManager.java
+│   │
+│   └── Main.java
+│
+└── test/                          # Tests JUnit
+```
+
+---
+
+## 🎯 Uso Básico
+
+```java
+// 1. Crear liga
+Lliga laLiga = new Lliga("LaLiga Santander", 4);
+
+// 2. Crear y configurar equipos
+Equip barcelona = new Equip("FC Barcelona", 1899, "Barcelona");
+barcelona.getTactica().setFormacion(Formacion.F_4_3_3);
+barcelona.getTactica().setEstiloJoc(EstiloJoc.OFENSIVO);
+barcelona.getTactica().setIntensidadPresion(8);
+
+// 3. Añadir jugadores
+Jugador messi = new Jugador("Lionel", "Messi", 
+    LocalDate.of(1987, 6, 24), 9.5, 500000, 10, "DAV", 95.0);
+barcelona.afegirJugador(messi);
+
+// 4. Añadir a liga y generar calendario
+laLiga.afegirEquip(barcelona);
+laLiga.generarCalendari();
+
+// 5. Simular temporada
+while (laLiga.getJornadaActual() < laLiga.getNumJornades()) {
+    laLiga.simularJornada();
+    laLiga.mostrarClassificacio();
+}
+
+// 6. Ver rankings
+System.out.println(laLiga.getRankings().generarTablasRankings());
+
+// 7. Guardar
+SimpleDatabaseManager.saveObject(laLiga, "partida.ser");
+```
+
+---
+
+## ⚙️ Sistema Táctico
+
+### Formaciones
+
+| Formación | DEF | MED | DAV | Bonus ATQ | Bonus DEF |
+|-----------|-----|-----|-----|-----------|-----------|
+| 4-4-2 | 4 | 4 | 2 | 1.10 | 1.20 |
+| 4-3-3 | 4 | 3 | 3 | 1.15 | 1.20 |
+| 3-5-2 | 3 | 5 | 2 | 1.10 | 1.15 |
+| 4-5-1 | 4 | 5 | 1 | 1.05 | 1.20 |
+| 5-3-2 | 5 | 3 | 2 | 1.10 | 1.25 |
+| 3-4-3 | 3 | 4 | 3 | 1.15 | 1.15 |
+
+### Estilos de Juego
+
+| Estilo | ATQ | DEF |
+|--------|-----|-----|
+| ULTRA_OFENSIVO | 1.30 | 0.70 |
+| OFENSIVO | 1.15 | 0.85 |
+| EQUILIBRADO | 1.00 | 1.00 |
+| DEFENSIVO | 0.85 | 1.15 |
+| ULTRA_DEFENSIVO | 0.70 | 1.30 |
+
+---
+
+## 🎲 Motor de Simulación
+
+**Proceso de 10 Pasos:**
+
+1. Preparación (alineaciones automáticas)
+2. Cálculo de fuerzas (tácticas + entrenador)
+3. **Poisson** para goles
+4. Asignar goleadores (DAV ×2.0)
+5. Asignar asistencias (70%)
+6. Simular tarjetas (5%/1%)
+7. Calcular ratings (0-10)
+8. Registrar estadísticas
+9. Aplicar fatiga
+10. Ordenar eventos
+
+### Distribución de Poisson
+
+```java
+double ratio = fuerzaAtacante / fuerzaDefensor;
+double lambda = max(0, ratio × 1.5 - 0.5);
+
+double L = exp(-lambda);
+double p = 1.0;
+int k = 0;
+while (p > L) {
+    k++;
+    p *= random();
+}
+goles = max(0, k - 1);
+```
+
+**Ventaja**: Equipos fuertes marcan más consistentemente.
+
+### Probabilidades de Goleador
+
+```java
+DAV: probabilidad × 2.0
+MIG: probabilidad × 1.2
+DEF: probabilidad × 0.3
+POR: probabilidad × 0.05
+```
+
+---
+
+## 📊 Estadísticas
+
+### Cálculo de Rating
+
+```java
+rating = 6.0 
+       + (goles × 1.5) / partidos
+       + (asistencias × 1.0) / partidos
+       - (amarillas × 0.2) / partidos
+       - (rojas × 0.5) / partidos
+// Límite: [0.0, 10.0]
+```
+
+### Rankings Disponibles
+
+- Top 10 goleadores
+- Top 10 asistentes
+- Top 10 mejor rating (mínimo 5 partidos)
+- Mejor portero (mínimo 3 partidos)
+- Más/menos disciplinado
+
+---
+
+## 💾 Persistencia
+
+```java
+// Guardar
+SimpleDatabaseManager.saveObject(liga, "partida.ser");
+
+// Cargar
+Lliga liga = (Lliga) SimpleDatabaseManager.loadObject("partida.ser");
+
+// Backup
+SimpleDatabaseManager.createBackup("partida.ser");
+```
+
+---
+
+## 📈 Métricas del Proyecto
+
+| Métrica | Valor |
+|---------|-------|
+| Versión | 2.0 |
+| Clases | 24 |
+| Líneas de código | ~3,500+ |
+| Fases completadas | 6/6 (100%) |
+
+---
+
+## 🛣️ Roadmap
+
+### ✅ v2.0 (Actual)
+- Sistema táctico completo
+- Motor Poisson
+- Estadísticas exhaustivas
+- Rankings automáticos
+- Persistencia
+
+### 🔄 v2.1 (Próximamente)
+- Interfaz gráfica (JavaFX)
+- Sistema de transferencias
+- Mercado de fichajes
+- Progresión de jugadores
+
+### 🚀 v3.0 (Futuro)
+- Multijugador
+- Editor de equipos
+- Gráficos estadísticos
+- Modo carrera
+
+---
+
+## 👥 Autor
+
+**Politècnics Football Manager Team**  
+Versión 2.0 - Febrero 2026
+
+---
+
+## 📝 Notas de Versión v2.0
+
+**Nuevas Funcionalidades:**
+- ✨ Sistema táctico (6 formaciones, 5 estilos)
+- ✨ Motor Poisson para simulación
+- ✨ Estadísticas con rating dinámico
+- ✨ Rankings automáticos
+- ✨ Sistema de fatiga y lesiones
+- ✨ Historial con eventos
+
+**Mejoras:**
+- Goleadores inteligentes (×2.0 delanteros)
+- 70% de goles con asistencia
+- Tarjetas realistas (5%/1%)
+
+---
+
+<div align="center">
+
+**⚽ Football Manager v2.0 ⚽**
+
+*Desarrollado con ❤️ para Politècnics*
+
+</div>

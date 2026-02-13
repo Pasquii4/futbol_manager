@@ -16,6 +16,8 @@ public class Lliga {
     private HashMap<String, DadesClassificacio> classificacio;
     private ArrayList<ArrayList<Partit>> jornades; // Partits organitzats per jornada
     private int jornadaActual;
+    private RankingsLliga rankings;
+    private HistorialPartits historial;
 
     /**
      * Constructor de la lliga.
@@ -30,6 +32,8 @@ public class Lliga {
         this.classificacio = new HashMap<>();
         this.jornades = new ArrayList<>();
         this.jornadaActual = 0;
+        this.rankings = new RankingsLliga(nom + " 2025-26");
+        this.historial = new HistorialPartits();
     }
 
     /**
@@ -146,15 +150,29 @@ public class Lliga {
         DadesClassificacio dades1 = classificacio.get(partit.getEquip1().getNom());
         DadesClassificacio dades2 = classificacio.get(partit.getEquip2().getNom());
         
-        if (partit.getGolsEquip1() > partit.getGolsEquip2()) {
+        boolean victoria1 = partit.getGolsEquip1() > partit.getGolsEquip2();
+        boolean victoria2 = partit.getGolsEquip2() > partit.getGolsEquip1();
+        boolean empat = partit.getGolsEquip1() == partit.getGolsEquip2();
+        
+        if (victoria1) {
             dades1.afegirVictoria(partit.getGolsEquip1(), partit.getGolsEquip2());
             dades2.afegirDerrota(partit.getGolsEquip2(), partit.getGolsEquip1());
-        } else if (partit.getGolsEquip2() > partit.getGolsEquip1()) {
+        } else if (victoria2) {
             dades2.afegirVictoria(partit.getGolsEquip2(), partit.getGolsEquip1());
             dades1.afegirDerrota(partit.getGolsEquip1(), partit.getGolsEquip2());
         } else {
             dades1.afegirEmpat(partit.getGolsEquip1());
             dades2.afegirEmpat(partit.getGolsEquip2());
+        }
+        
+        // Processar ingressos del pressupost
+        // Equip 1 juga a casa (equip local)
+        if (partit.getEquip1().getPresupuesto() != null) {
+            partit.getEquip1().getPresupuesto().procesarJornadaCompleta(victoria1, empat, true);
+        }
+        // Equip 2 juga fora
+        if (partit.getEquip2().getPresupuesto() != null) {
+            partit.getEquip2().getPresupuesto().procesarJornadaCompleta(victoria2, empat, false);
         }
     }
     

@@ -19,6 +19,8 @@ public class Equip {
     private String president;
     private Entrenador entrenador;
     private ArrayList<Jugador> jugadors;
+    private Presupuesto presupuesto;
+    private TacticaEquip tactica;
 
     /**
      * Constructor amb camps obligatoris.
@@ -32,6 +34,8 @@ public class Equip {
         this.anyFundacio = anyFundacio;
         this.ciutat = ciutat;
         this.jugadors = new ArrayList<>();
+        this.presupuesto = new Presupuesto(1000000.0, 10000.0); // Pressupost inicial per defecte
+        this.tactica = new TacticaEquip(); // Tàctica per defecte
     }
 
     /**
@@ -136,6 +140,15 @@ public class Equip {
     }
 
     /**
+     * Prepara l'equip per a un partit generant l'alineació automàtica.
+     */
+    public void prepararPartido() {
+        if (tactica != null) {
+            tactica.generarAlineacionAutomatica(jugadors);
+        }
+    }
+
+    /**
      * Obté la llista de jugadors ordenada per posició i qualitat.
      * 
      * @return ArrayList de jugadors ordenats
@@ -236,6 +249,42 @@ public class Equip {
      */
     public ArrayList<Jugador> getJugadors() {
         return jugadors;
+    }
+
+    /**
+     * Obté el pressupost de l'equip.
+     * 
+     * @return El pressupost
+     */
+    public Presupuesto getPresupuesto() {
+        return presupuesto;
+    }
+
+    /**
+     * Estableix el pressupost de l'equip.
+     * 
+     * @param presupuesto El nou pressupost
+     */
+    public void setPresupuesto(Presupuesto presupuesto) {
+        this.presupuesto = presupuesto;
+    }
+
+    /**
+     * Obté la tàctica de l'equip.
+     * 
+     * @return La tàctica
+     */
+    public TacticaEquip getTactica() {
+        return tactica;
+    }
+
+    /**
+     * Estableix la tàctica de l'equip.
+     * 
+     * @param tactica La nova tàctica
+     */
+    public void setTactica(TacticaEquip tactica) {
+        this.tactica = tactica;
     }
 
     /**

@@ -71,6 +71,19 @@ public class Entrenador extends Persona {
     }
 
     /**
+     * Calcula l'experiència basada en tornejos guanyats i si és seleccionador.
+     * 
+     * @return Experiència (0-100)
+     */
+    public double getExperiencia() {
+        double exp = tornejosGuanyats * 10.0;
+        if (seleccionadorNacional) {
+            exp += 20.0;
+        }
+        return Math.min(100.0, exp);
+    }
+
+    /**
      * Retorna una representació detallada de l'entrenador.
      * 
      * @return String amb totes les dades de l'entrenador

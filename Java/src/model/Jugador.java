@@ -27,6 +27,13 @@ public class Jugador extends Persona {
     private int tarjetesVermelles;
     private double forma; // Forma actual del jugador (0-10)
     
+    // Sistema de fatiga i lesions
+    private double fatiga; // Fatiga del jugador (0-100)
+    private Lesion lesionActual; // Lesió actual o null si no n'hi ha
+    
+    // Estadístiques avançades
+    private EstadisticasJugador estadisticas;
+    
     private static final Random random = new Random();
 
     /**
@@ -55,6 +62,9 @@ public class Jugador extends Persona {
         this.tarjetesGrogues = 0;
         this.tarjetesVermelles = 0;
         this.forma = 7.0; // Forma inicial neutral
+        this.fatiga = 0.0; // Sense fatiga inicial
+        this.lesionActual = null; // Sense lesió inicial
+        this.estadisticas = new EstadisticasJugador(nom, dorsal);
         
         totalJugadors++;
     }
@@ -254,14 +264,70 @@ public class Jugador extends Persona {
     }
     
     /**
-     * Obté la qualitat efectiva del jugador (qualitat * forma).
+     * Obté la qualitat efectiva del jugador.
+     * Té en compte la forma, fatiga i lesions.
      * 
-     * @return La qualitat ajustada per la forma
+     * @return La qualitat ajustada (0 si està lesionat)
      */
     public double getQualitatEfectiva() {
-        // La forma afecta la qualitat (±20%)
-        double factorForma = 0.8 + (this.forma / 50.0); // 0.8 a 1.0
-        return this.qualitat * factorForma;
+        if (!estaDisponible()) {
+            return 0.0;
+        }
+        
+        // Factor de forma (0.8 a 1.0)
+        double factorForma = 0.8 + (this.forma / 50.0);
+        
+        // Factor de fatiga (1.0 sense fatiga, 0.0 amb fatiga màxima)
+        double factorFatiga = 1.0 - (this.fatiga / 100.0);
+        
+        return this.qualitat * factorForma * factorFatiga;
+    }
+    
+    /**
+     * Augmenta la fatiga del jugador.
+     * 
+     * @param incremento Increment de fatiga
+     */
+    public void aumentarFatiga(double incremento) {
+        this.fatiga = Math.min(100.0, this.fatiga + incremento);
+    }
+    
+    /**
+     * Redueix la fatiga del jugador.
+     * 
+     * @param reduccion Reducció de fatiga
+     */
+    public void reducirFatiga(double reduccion) {
+        this.fatiga = Math.max(0.0, this.fatiga - reduccion);
+    }
+    
+    /**
+     * Recupera fatiga després del descans entre jornades.
+     * Redueix la fatiga en 20 punts.
+     */
+    public void recuperarFatiga() {
+        reducirFatiga(20.0);
+    }
+    
+    /**
+     * Comprova si el jugador està disponible per jugar.
+     * 
+     * @return true si no està lesionat
+     */
+    public boolean estaDisponible() {
+        return lesionActual == null || lesionActual.estaRecuperado();
+    }
+    
+    /**
+     * Avança la recuperació de la lesió actual.
+     */
+    public void avanzarRecuperacionLesion() {
+        if (lesionActual != null) {
+            lesionActual.avanzarRecuperacion();
+            if (lesionActual.estaRecuperado()) {
+                lesionActual = null; // Eliminar lesió quan està recuperada
+            }
+        }
     }
     
     /**
@@ -279,6 +345,17 @@ public class Jugador extends Persona {
     public int getTargetesGrogues() { return tarjetesGrogues; }
     public int getTargetesVermelles() { return tarjetesVermelles; }
     public double getForma() { return forma; }
+    public double getFatiga() { return fatiga; }
+    public void setFatiga(double fatiga) { 
+        this.fatiga = Math.max(0.0, Math.min(100.0, fatiga)); 
+    }
+    public Lesion getLesionActual() { return lesionActual; }
+    public void setLesionActual(Lesion lesionActual) { 
+        this.lesionActual = lesionActual; 
+    }
+    public EstadisticasJugador getEstadisticas() { 
+        return estadisticas; 
+    }
 
     /**
      * Compara si dos jugadors són iguals basant-se en nom i dorsal.
