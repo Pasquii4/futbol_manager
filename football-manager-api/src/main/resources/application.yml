@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: football-manager-api
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/football_manager
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  # JWT Configuration
+  security:
+    jwt:
+      secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # 1 day
+
+# Logging
+logging:
+  level:
+    org.springframework.web: INFO
+    com.politecnics.football: DEBUG
