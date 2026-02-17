@@ -498,23 +498,37 @@ public class Main {
         System.out.print("\nNom de la lliga: ");
         String nomLliga = scanner.nextLine().trim();
         
-        int numEquips = llegirEnter("Nombre d'equips que participaran: ", 2, equips.size());
+        System.out.print("Vols afegir tots els equips disponibles automàticament? (s/n): ");
+        String opcioTots = scanner.nextLine().trim().toLowerCase();
         
-        lligaActual = new Lliga(nomLliga, numEquips);
-        
-        for (int i = 0; i < numEquips; i++) {
-            while (true) {
-                System.out.print(String.format("Equip %d/%d: ", i + 1, numEquips));
-                String nomEquip = scanner.nextLine().trim();
-                
-                Equip equip = buscarEquip(nomEquip);
-                if (equip == null) {
-                    System.out.println("❌ Equip no trobat. Torna-ho a intentar.");
-                } else if (!lligaActual.afegirEquip(equip)) {
-                    System.out.println("❌ Aquest equip ja està a la lliga. Tria un altre.");
-                } else {
-                    System.out.println("✅ Equip afegit!");
-                    break;
+        if (opcioTots.equals("s")) {
+            int numEquips = equips.size();
+            lligaActual = new Lliga(nomLliga, numEquips);
+            
+            for (Equip equip : equips) {
+                lligaActual.afegirEquip(equip);
+            }
+            System.out.println("✅ S'han afegit tots els " + numEquips + " equips a la lliga correctament!");
+            
+        } else {
+            int numEquips = llegirEnter("Nombre d'equips que participaran: ", 2, equips.size());
+            
+            lligaActual = new Lliga(nomLliga, numEquips);
+            
+            for (int i = 0; i < numEquips; i++) {
+                while (true) {
+                    System.out.print(String.format("Equip %d/%d: ", i + 1, numEquips));
+                    String nomEquip = scanner.nextLine().trim();
+                    
+                    Equip equip = buscarEquip(nomEquip);
+                    if (equip == null) {
+                        System.out.println("❌ Equip no trobat. Torna-ho a intentar.");
+                    } else if (!lligaActual.afegirEquip(equip)) {
+                        System.out.println("❌ Aquest equip ja està a la lliga. Tria un altre.");
+                    } else {
+                        System.out.println("✅ Equip afegit!");
+                        break;
+                    }
                 }
             }
         }
