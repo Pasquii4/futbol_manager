@@ -41,7 +41,11 @@ public class MotorSimulacionAdapter {
             .map(evt -> mapToEntityEvento(evt, partidoEntity))
             .collect(Collectors.toList());
         
-        partidoEntity.setEventos(eventosEntities);
+        if (partidoEntity.getEventos() == null) {
+            partidoEntity.setEventos(new ArrayList<>());
+        }
+        partidoEntity.getEventos().clear();
+        partidoEntity.getEventos().addAll(eventosEntities);
         
         // 6. Update Players Stats (Engine updated its own objects, we need to sync back)
         syncJugadoresStats(equip1, partidoEntity.getEquipoLocal());
@@ -117,7 +121,7 @@ public class MotorSimulacionAdapter {
             entity.getCalidad()
         );
         
-        j.setFaiga(entity.getFatiga());
+        j.setFatiga(entity.getFatiga());
         j.setForma(entity.getForma());
         
         // Stats mapping needed for engine logic?
@@ -183,6 +187,15 @@ public class MotorSimulacionAdapter {
                 jEntity.setFatiga(jEngine.getFatiga());
                 jEntity.setForma(jEngine.getForma());
                 jEntity.setMotivacion(jEngine.getMotivacio());
+                
+                // Map Injury
+                if (jEngine.getLesionActual() != null && jEntity.getLesion() == null) {
+                    com.politecnics.football.entity.Lesion lesionEntity = new com.politecnics.football.entity.Lesion();
+                    lesionEntity.setTipoLesion(jEngine.getLesionActual().getTipoLesion());
+                    lesionEntity.setDiasRestantes(jEngine.getLesionActual().getDiasRecuperacion());
+                    lesionEntity.setJugador(jEntity);
+                    jEntity.setLesion(lesionEntity);
+                }
             }
         }
     }

@@ -7,9 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, Shield, TrendingUp, DollarSign } from "lucide-react"
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
 async function getEquipo(id: string): Promise<EquipoDTO | null> {
@@ -22,7 +22,8 @@ async function getEquipo(id: string): Promise<EquipoDTO | null> {
     }
 }
 
-export default async function EquipoPage({ params }: PageProps) {
+export default async function EquipoPage(props: PageProps) {
+    const params = await props.params;
     const equipo = await getEquipo(params.id);
 
     if (!equipo) {

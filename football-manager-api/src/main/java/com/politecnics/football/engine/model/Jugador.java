@@ -83,8 +83,23 @@ public class Jugador extends Persona {
         return dorsal == jugador.dorsal && getNom().equals(jugador.getNom());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNom(), dorsal);
+    public double getPesoGol() {
+        switch (posicio) {
+            case "DAV": return 10.0;
+            case "MIG": return 3.0;
+            case "DEF": return 1.0;
+            case "POR": return 0.1;
+            default: return 1.0;
+        }
+    }
+
+    public double getPesoTarjetas() {
+        switch (posicio) {
+            case "DEF": return 2.0; // Higher chance for defenders
+            case "MIG": return 1.5;
+            case "POR": return 0.2;
+            case "DAV": return 0.5;
+            default: return 1.0;
+        }
     }
 }

@@ -29,6 +29,7 @@ export interface LigaDTO {
     jornadaActual: number;
     totalJornadas: number;
     finalizada: boolean;
+    equipos?: EquipoDTO[];
 }
 
 export interface EquipoDTO {

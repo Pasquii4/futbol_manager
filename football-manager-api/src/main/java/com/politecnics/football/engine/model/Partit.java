@@ -104,10 +104,12 @@ public class Partit {
     
     private void assignarGoleadoresYAsistencias(Equip equip, int gols) {
         List<Jugador> titulares = equip.getTactica().getTitulares();
-        if (titulares.isEmpty()) return;
+        if (titulares == null || titulares.isEmpty()) return;
         
         for (int i = 0; i < gols; i++) {
             Jugador goleador = seleccionarGoleador(titulares);
+            if (goleador == null) continue;
+            
             int minut = 1 + random.nextInt(90);
             
             goleador.registrarGol();
@@ -131,24 +133,57 @@ public class Partit {
     }
     
     private Jugador seleccionarGoleador(List<Jugador> jugadores) {
-        // Simplified selection logic
-        return jugadores.get(random.nextInt(jugadores.size())); // Placeholder for complex logic if needed
+        if (jugadores == null || jugadores.isEmpty()) return null;
+
+        double totalWeight = jugadores.stream()
+            .mapToDouble(j -> j.getPesoGol() * (j.getQualitat() / 10.0))
+            .sum();
+            
+        double r = random.nextDouble() * totalWeight;
+        double currentWeight = 0.0;
+        
+        for (Jugador j : jugadores) {
+            currentWeight += j.getPesoGol() * (j.getQualitat() / 10.0);
+            if (r <= currentWeight) {
+                return j;
+            }
+        }
+        return jugadores.get(random.nextInt(jugadores.size())); // Fallback
     }
     
     private Jugador seleccionarAssistent(List<Jugador> jugadores, Jugador goleador) {
         List<Jugador> possibles = new ArrayList<>(jugadores);
         possibles.remove(goleador);
         if (possibles.isEmpty()) return null;
+        
+        // Simple weighted selection for assists (Midfielders have higher chance)
+        double totalWeight = possibles.stream()
+            .mapToDouble(j -> j.getPosicio().equals("MIG") ? 3.0 : 1.0)
+            .sum();
+            
+        double r = random.nextDouble() * totalWeight;
+        double currentWeight = 0.0;
+        
+        for (Jugador j : possibles) {
+            currentWeight += j.getPosicio().equals("MIG") ? 3.0 : 1.0;
+            if (r <= currentWeight) return j;
+        }
+        
         return possibles.get(random.nextInt(possibles.size()));
     }
     
     private void simularTarjetas(Equip equip) {
-        for (Jugador j : equip.getTactica().getTitulares()) {
-            if (random.nextDouble() < 0.01) {
+        List<Jugador> titulares = equip.getTactica().getTitulares();
+        if (titulares == null || titulares.isEmpty()) return;
+
+        for (Jugador j : titulares) {
+            double chanceFactor = j.getPesoTarjetas(); // Base on position
+            
+            if (random.nextDouble() < (0.005 * chanceFactor)) {
                 j.registrarTargetaVermella();
                 tarjetasRojas.put(j, tarjetasRojas.getOrDefault(j, 0) + 1);
                 eventos.add(new EventoPartido(random.nextInt(90)+1, EventoPartido.TipoEvento.TARJETA_ROJA, j, "Roja a " + j.getNom()));
-            } else if (random.nextDouble() < 0.05) {
+            } else if (random.nextDouble() < (0.05 * chanceFactor)) {
                 j.registrarTargetaGroga();
                 tarjetasAmarillas.put(j, tarjetasAmarillas.getOrDefault(j, 0) + 1);
                 eventos.add(new EventoPartido(random.nextInt(90)+1, EventoPartido.TipoEvento.TARJETA_AMARILLA, j, "Groga a " + j.getNom()));
@@ -157,15 +192,68 @@ public class Partit {
     }
     
     private double calcularRatingEquipo(int favor, int contra) {
-        double rating = 5.0 + (favor * 2.0) - (contra * 1.5);
+        double rating = 6.0 + (favor * 0.5) - (contra * 0.3);
+        if (favor > contra) rating += 1.0;
         return Math.max(0, Math.min(10, rating));
     }
     
     private void registrarEstadisticasEnJugadores() {
-        // Stats already updated in methods above for simplicity
-        // But need to update ratings
-        equip1.getTactica().getTitulares().forEach(j -> j.getEstadisticas().actualizarRating(6.5)); // Simplified
-        equip2.getTactica().getTitulares().forEach(j -> j.getEstadisticas().actualizarRating(6.5));
+        // Calculate dynamic ratings
+        actualizarRatingEquipo(equip1, golsEquip1, golsEquip2);
+        actualizarRatingEquipo(equip2, golsEquip2, golsEquip1);
+        
+        // Simulate Injuries
+        simularLesiones(equip1);
+        simularLesiones(equip2);
+    }
+    
+    private void actualizarRatingEquipo(Equip equip, int gf, int gc) {
+        List<Jugador> titulares = equip.getTactica().getTitulares();
+        if (titulares == null || titulares.isEmpty()) return;
+
+        boolean victory = gf > gc;
+        boolean draw = gf == gc;
+        boolean cleanSheet = gc == 0;
+        
+        for (Jugador j : titulares) {
+            double rating = 6.0;
+            
+            // Base based heavily on quality for realism foundation
+            rating += (j.getQualitat() - 60.0) / 20.0; // Bonus for better players
+            
+            // Events
+            int goles = goleadores.getOrDefault(j, 0);
+            int asis = asistentes.getOrDefault(j, 0);
+            
+            rating += (goles * 1.5);
+            rating += (asis * 1.0);
+            
+            if (j.getPosicio().equals("POR") || j.getPosicio().equals("DEF")) {
+                if (cleanSheet) rating += 1.5;
+                else rating -= (gc * 0.3);
+            }
+            
+            if (victory) rating += 0.5;
+            if (!draw && !victory) rating -= 0.5;
+            
+            j.getEstadisticas().actualizarRating(Math.max(3.0, Math.min(10.0, rating)));
+        }
+    }
+    
+    private void simularLesiones(Equip equip) {
+        List<Jugador> titulares = equip.getTactica().getTitulares();
+        if (titulares == null || titulares.isEmpty()) return;
+
+        for (Jugador j : titulares) {
+            // 1% chance of injury
+            if (random.nextDouble() < 0.01) {
+                // Determine severity (1-5 weeks)
+                int weeks = 1 + random.nextInt(4);
+                // We create a Lesion object (assuming engine model suppports it or we set flag)
+                j.setLesionActual(new Lesion("Lesión Muscular", weeks * 7));
+                eventos.add(new EventoPartido(random.nextInt(90)+1, EventoPartido.TipoEvento.LESION, j, "Lesión de " + j.getNom()));
+            }
+        }
     }
     
     private void actualitzarFormaDespresPartit() {
@@ -173,8 +261,11 @@ public class Partit {
         boolean v2 = golsEquip2 > golsEquip1;
         boolean emp = golsEquip1 == golsEquip2;
         
-        equip1.getTactica().getTitulares().forEach(j -> j.actualitzarFormaDespresPartit(v1, emp));
-        equip2.getTactica().getTitulares().forEach(j -> j.actualitzarFormaDespresPartit(v2, emp));
+        if (equip1.getTactica().getTitulares() != null)
+             equip1.getTactica().getTitulares().forEach(j -> j.actualitzarFormaDespresPartit(v1, emp));
+             
+        if (equip2.getTactica().getTitulares() != null)
+             equip2.getTactica().getTitulares().forEach(j -> j.actualitzarFormaDespresPartit(v2, emp));
     }
 
     // Getters
