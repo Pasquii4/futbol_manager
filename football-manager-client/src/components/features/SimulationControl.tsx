@@ -21,7 +21,7 @@ export function SimulationControl({ ligaId, jornadaActual, finalizada }: Simulat
 
         setLoading(true)
         try {
-            await api.post(`/ligas/${ligaId}/simular`)
+            await api.post(`/simulate/matchday`)
             router.refresh() // Refresh server components to show new stats/table
         } catch (error) {
             console.error("Simulation failed", error)

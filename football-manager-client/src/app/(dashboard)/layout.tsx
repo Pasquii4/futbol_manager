@@ -17,8 +17,9 @@ export default function DashboardLayout({
                 </div>
                 <nav className="mt-6 px-4 space-y-2">
                     <NavItem href="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" />
-                    <NavItem href="/ligas" icon={<Trophy size={20} />} label="Competiciones" />
-                    <NavItem href="/equipos" icon={<Users size={20} />} label="Mis Equipos" />
+                    <NavItem href="/laliga" icon={<Trophy size={20} />} label="LaLiga" />
+                    <NavItem href="/matches" icon={<ShoppingBag size={20} />} label="Partidos" />
+                    <NavItem href="/equipos" icon={<Users size={20} />} label="Equipos" />
                     <NavItem href="/mercado" icon={<ShoppingBag size={20} />} label="Mercado" />
                     <NavItem href="/estadisticas" icon={<BarChart3 size={20} />} label="Estadísticas" />
                     <div className="pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-800">

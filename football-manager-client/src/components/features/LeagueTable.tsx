@@ -8,21 +8,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { EquipoDTO } from "@/lib/types"
+import { StandingsItem } from "@/lib/api"
 
 interface LeagueTableProps {
-    equipos: EquipoDTO[]
+    data: StandingsItem[]
 }
 
-export function LeagueTable({ equipos }: LeagueTableProps) {
-    // Sort teams by points, then goal difference, then goals scored
-    const sortedEquipos = [...equipos].sort((a, b) => {
-        if (b.puntos !== a.puntos) return b.puntos - a.puntos;
-        const diffA = a.golesFavor - a.golesContra;
-        const diffB = b.golesFavor - b.golesContra;
-        if (diffB !== diffA) return diffB - diffA;
-        return b.golesFavor - a.golesFavor;
-    });
+export function LeagueTable({ data }: LeagueTableProps) {
+    // Data is already sorted by backend
+    const sortedEquipos = data;
 
     return (
         <div className="rounded-md border bg-card">
@@ -43,17 +37,17 @@ export function LeagueTable({ equipos }: LeagueTableProps) {
                 </TableHeader>
                 <TableBody>
                     {sortedEquipos.map((equipo, index) => (
-                        <TableRow key={equipo.id}>
+                        <TableRow key={equipo.teamId}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
-                            <TableCell className="font-semibold">{equipo.nombre}</TableCell>
-                            <TableCell className="text-center">{equipo.partidosJugados}</TableCell>
-                            <TableCell className="text-center">{equipo.victorias}</TableCell>
-                            <TableCell className="text-center">{equipo.empates}</TableCell>
-                            <TableCell className="text-center">{equipo.derrotas}</TableCell>
-                            <TableCell className="text-center">{equipo.golesFavor}</TableCell>
-                            <TableCell className="text-center">{equipo.golesContra}</TableCell>
-                            <TableCell className="text-center">{equipo.golesFavor - equipo.golesContra}</TableCell>
-                            <TableCell className="text-right font-bold text-lg">{equipo.puntos}</TableCell>
+                            <TableCell className="font-semibold">{equipo.teamName}</TableCell>
+                            <TableCell className="text-center">{equipo.played}</TableCell>
+                            <TableCell className="text-center">{equipo.won}</TableCell>
+                            <TableCell className="text-center">{equipo.drawn}</TableCell>
+                            <TableCell className="text-center">{equipo.lost}</TableCell>
+                            <TableCell className="text-center">{equipo.goalsFor}</TableCell>
+                            <TableCell className="text-center">{equipo.goalsAgainst}</TableCell>
+                            <TableCell className="text-center">{equipo.goalDifference}</TableCell>
+                            <TableCell className="text-right font-bold text-lg">{equipo.points}</TableCell>
                         </TableRow>
                     ))}
                     {sortedEquipos.length === 0 && (

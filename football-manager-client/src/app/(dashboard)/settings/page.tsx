@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export default function SettingsPage() {
     return (
@@ -18,7 +19,7 @@ export default function SettingsPage() {
                             <h3 className="font-medium">Modo Oscuro</h3>
                             <p className="text-sm text-neutral-500">Activar apariencia oscura de la interfaz</p>
                         </div>
-                        <Button variant="outline">Cambiar</Button>
+                        <ModeToggle />
                     </div>
 
                     <div className="flex items-center justify-between p-4 border rounded-lg">

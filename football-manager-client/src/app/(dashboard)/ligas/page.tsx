@@ -1,70 +1,59 @@
-import api from "@/lib/api"
-import { LigaDTO } from "@/lib/types"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Trophy, Calendar, CheckCircle2, Activity } from "lucide-react"
+'use client';
 
-async function getLigas(): Promise<LigaDTO[]> {
-    try {
-        const res = await api.get('/ligas');
-        return res.data;
-    } catch (error) {
-        console.error("Failed to fetch leagues", error);
-        return [];
-    }
-}
+import { useEffect, useState } from 'react';
+import { api, StandingsItem } from '@/app/services/api';
 
-export default async function LigasPage() {
-    const ligas = await getLigas();
+export default function StandingsPage() {
+    const [standings, setStandings] = useState<StandingsItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.getStandings()
+            .then(setStandings)
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) return <div className="p-8">Loading standings...</div>;
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Competiciones</h1>
+        <div className="p-8">
+            <h1 className="text-3xl font-bold mb-6">League Standings</h1>
 
-            <div className="grid gap-6 md:grid-cols-2">
-                {ligas.map((liga) => (
-                    <Card key={liga.id} className="border-neutral-200 dark:border-neutral-800">
-                        <CardHeader>
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <CardTitle className="text-xl text-blue-700 dark:text-blue-400">{liga.nombre}</CardTitle>
-                                    <CardDescription>Liga Profesional</CardDescription>
-                                </div>
-                                <Trophy className="h-8 w-8 text-yellow-500" />
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
-                                    <Activity className="h-5 w-5 text-blue-500" />
-                                    <div>
-                                        <p className="text-xs text-muted-foreground">Estado</p>
-                                        <p className="font-medium">{liga.finalizada ? "Finalizada" : "En Curso"}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
-                                    <Calendar className="h-5 w-5 text-green-500" />
-                                    <div>
-                                        <p className="text-xs text-muted-foreground">Jornada</p>
-                                        <p className="font-medium">{liga.jornadaActual} / {liga.totalJornadas}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between text-sm pt-2 border-t">
-                                <span className="text-muted-foreground">Equipos participantes</span>
-                                <span className="font-bold">{liga.numEquipos}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-                {ligas.length === 0 && (
-                    <div className="col-span-full p-12 text-center border rounded-lg bg-neutral-50 dark:bg-neutral-900">
-                        <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-3 opacity-20" />
-                        <h3 className="text-lg font-medium">No hay competiciones activas</h3>
-                        <p className="text-muted-foreground">La base de datos de ligas está vacía.</p>
-                    </div>
-                )}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+                <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th className="px-6 py-3">Pos</th>
+                            <th className="px-6 py-3">Team</th>
+                            <th className="px-6 py-3">Played</th>
+                            <th className="px-6 py-3">Won</th>
+                            <th className="px-6 py-3">Drawn</th>
+                            <th className="px-6 py-3">Lost</th>
+                            <th className="px-6 py-3">GF</th>
+                            <th className="px-6 py-3">GA</th>
+                            <th className="px-6 py-3">GD</th>
+                            <th className="px-6 py-3">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {standings.map((team) => (
+                            <tr key={team.teamId} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{team.position}</td>
+                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{team.teamName}</td>
+                                <td className="px-6 py-4">{team.played}</td>
+                                <td className="px-6 py-4">{team.won}</td>
+                                <td className="px-6 py-4">{team.drawn}</td>
+                                <td className="px-6 py-4">{team.lost}</td>
+                                <td className="px-6 py-4">{team.goalsFor}</td>
+                                <td className="px-6 py-4">{team.goalsAgainst}</td>
+                                <td className="px-6 py-4">{team.goalDifference}</td>
+                                <td className="px-6 py-4 font-bold text-lg">{team.points}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
-    )
+    );
 }
