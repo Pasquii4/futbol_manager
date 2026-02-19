@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Service
@@ -65,9 +66,26 @@ public class MatchEngine {
         List<Player> players = team.getPlayers();
         if (players == null || players.isEmpty()) return;
 
+        // Scorer candidates (weighted)
+        List<Player> candidates = new ArrayList<>();
+        List<Player> attackers = players.stream()
+                .filter(p -> p.getPosition() != null && (p.getPosition().contains("ST") || p.getPosition().contains("FW") || p.getPosition().contains("RW") || p.getPosition().contains("LW")))
+                .collect(Collectors.toList());
+        List<Player> midfielders = players.stream()
+                .filter(p -> p.getPosition() != null && (p.getPosition().contains("M") || p.getPosition().contains("CAM") || p.getPosition().contains("CM") || p.getPosition().contains("RM") || p.getPosition().contains("LM")))
+                .collect(Collectors.toList());
+        
+        // Weight: Attackers 5 tickets, Mids 2 tickets, Others 1 ticket
+        for (Player p : players) {
+            int tickets = 1;
+            if (attackers.contains(p)) tickets = 6;
+            else if (midfielders.contains(p)) tickets = 2;
+            
+            for (int k = 0; k < tickets; k++) candidates.add(p);
+        }
+
         for (int i = 0; i < goals; i++) {
-            // Select random scorer (weighted by position could be added later)
-            Player scorer = players.get(random.nextInt(players.size()));
+            Player scorer = candidates.get(random.nextInt(candidates.size()));
             
             MatchEvent event = MatchEvent.builder()
                     .match(match)

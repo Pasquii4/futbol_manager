@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     List<Player> findByTeam_TeamId(String teamId);
+    java.util.Optional<Player> findByPlayerId(String playerId);
     
     // Stats
     List<Player> findTop20ByOrderByGoalsScoredDesc();

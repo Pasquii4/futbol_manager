@@ -27,6 +27,7 @@ public class MatchEvent {
     @Enumerated(EnumType.STRING)
     private EventType type; // GOAL, ASSIST, YELLOW_CARD, RED_CARD
 
+    @Column(name = "event_minute")
     private Integer minute;
     
     public enum EventType {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api, Player } from '@/app/services/api';
+import { getPlayer, Player } from '@/lib/api';
 import { useParams } from 'next/navigation';
 
 export default function PlayerDetailPage() {
@@ -11,7 +11,7 @@ export default function PlayerDetailPage() {
 
     useEffect(() => {
         if (id) {
-            api.getPlayer(id as string)
+            getPlayer(id as string)
                 .then(setPlayer)
                 .catch(console.error)
                 .finally(() => setLoading(false));
@@ -46,10 +46,10 @@ export default function PlayerDetailPage() {
                 <div className="border-t dark:border-gray-700 pt-6">
                     <h2 className="text-xl font-semibold mb-4">Season Stats</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <StatBox label="Apps" value={player.matchesPlayed} />
-                        <StatBox label="Goals" value={player.goalsScored} />
-                        <StatBox label="Assists" value={player.assists} />
-                        <StatBox label="Yellow Cards" value={player.yellowCards} />
+                        <StatBox label="Apps" value={player.matchesPlayed || 0} />
+                        <StatBox label="Goals" value={player.goalsScored || 0} />
+                        <StatBox label="Assists" value={player.assists || 0} />
+                        <StatBox label="Yellow Cards" value={player.yellowCards || 0} />
                     </div>
                 </div>
             </div>

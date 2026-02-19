@@ -22,5 +22,8 @@ public class League {
     @Column(name = "season_year")
     private Integer seasonYear;
 
+    @Column(name = "managed_team_id")
+    private Long managedTeamId;
+
     // Could add list of teams here, but might be better to manage relationship from Team side or separate join
 }

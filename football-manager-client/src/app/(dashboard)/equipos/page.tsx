@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api, Team } from '@/app/services/api';
+import { getTeams, Team } from '@/lib/api';
 import Link from 'next/link';
 
 export default function TeamsPage() {
@@ -9,7 +9,7 @@ export default function TeamsPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.getTeams()
+        getTeams()
             .then(setTeams)
             .catch(console.error)
             .finally(() => setLoading(false));

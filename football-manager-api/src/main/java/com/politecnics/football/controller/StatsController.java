@@ -51,6 +51,7 @@ public class StatsController {
                 .yellowCards(player.getYellowCards())
                 .redCards(player.getRedCards())
                 .matchesPlayed(player.getMatchesPlayed())
+                .marketValue(player.getMarketValue())
                 .teamId(player.getTeam() != null ? player.getTeam().getTeamId() : null)
                 .teamName(player.getTeam() != null ? player.getTeam().getName() : null)
                 .build();

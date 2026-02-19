@@ -11,4 +11,5 @@ public class MatchEventDTO {
     private String playerName;
     private String type; // GOAL, CARD...
     private Integer minute;
+    private Long teamId;
 }

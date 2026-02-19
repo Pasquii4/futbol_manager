@@ -26,7 +26,7 @@ public class MatchController {
         if (matchday != null) {
             matches = matchRepository.findByMatchday(matchday);
         } else {
-            matches = matchRepository.findAll();
+            matches = matchRepository.findAllByOrderByMatchdayAsc();
         }
         
         List<MatchDTO> dtos = matches.stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -59,6 +59,7 @@ public class MatchController {
                         .playerName(e.getPlayer() != null ? e.getPlayer().getName() : "Unknown")
                         .type(e.getType().name())
                         .minute(e.getMinute())
+                        .teamId(e.getPlayer() != null && e.getPlayer().getTeam() != null ? e.getPlayer().getTeam().getId() : null)
                         .build()).collect(Collectors.toList()) : new ArrayList<>())
                 .build();
     }

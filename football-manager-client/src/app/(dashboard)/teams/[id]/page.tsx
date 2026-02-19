@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api, Team } from '@/app/services/api';
+import { getTeam, Team } from '@/lib/api';
 import { useParams } from 'next/navigation';
 
 export default function TeamDetailPage() {
@@ -11,7 +11,7 @@ export default function TeamDetailPage() {
 
     useEffect(() => {
         if (id) {
-            api.getTeam(id as string)
+            getTeam(id as string)
                 .then(setTeam)
                 .catch(console.error)
                 .finally(() => setLoading(false));
@@ -61,7 +61,7 @@ export default function TeamDetailPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {team.players.map((player) => (
+                            {team.players?.map((player) => (
                                 <tr key={player.playerId} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td className="px-6 py-4 font-medium text-gray-500">{player.position}</td>
                                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{player.name}</td>

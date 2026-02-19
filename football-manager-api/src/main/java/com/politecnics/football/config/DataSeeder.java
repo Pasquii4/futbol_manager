@@ -25,7 +25,7 @@ public class DataSeeder {
     private final JugadorRepository jugadorRepository;
     private final com.politecnics.football.repository.PartidoRepository partidoRepository;
 
-    @Bean
+    //@Bean
     public CommandLineRunner initData() {
         return args -> {
             if (ligaRepository.count() == 0) {

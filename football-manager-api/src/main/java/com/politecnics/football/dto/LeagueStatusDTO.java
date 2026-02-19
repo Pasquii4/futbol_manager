@@ -11,4 +11,5 @@ public class LeagueStatusDTO {
     private Integer seasonYear;
     private boolean isStarted;
     private boolean isFinished;
+    private Long managedTeamId;
 }

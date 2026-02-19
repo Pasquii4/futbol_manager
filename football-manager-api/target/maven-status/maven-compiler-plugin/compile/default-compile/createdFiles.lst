@@ -10,6 +10,7 @@ com\politecnics\football\entity\League$LeagueBuilder.class
 com\politecnics\football\service\LeagueService$1.class
 com\politecnics\football\entity\EstadisticasJugador$EstadisticasJugadorBuilder.class
 com\politecnics\football\config\OpenApiConfig.class
+com\politecnics\football\entity\User.class
 com\politecnics\football\entity\Match$MatchBuilder.class
 com\politecnics\football\entity\Entrenador$EntrenadorBuilder.class
 com\politecnics\football\dto\MatchEventDTO.class
@@ -29,7 +30,6 @@ com\politecnics\football\dto\PresupuestoDTO.class
 com\politecnics\football\entity\Jugador.class
 com\politecnics\football\config\DataSeeder$Pair.class
 com\politecnics\football\entity\Presupuesto.class
-com\politecnics\football\engine\MatchSimulationEngine.class
 com\politecnics\football\service\PartidoService.class
 com\politecnics\football\engine\model\Persona.class
 com\politecnics\football\entity\EventoPartido$TipoEvento.class
@@ -46,6 +46,7 @@ com\politecnics\football\mapper\PartidoMapper.class
 com\politecnics\football\dto\EquipoDTO.class
 com\politecnics\football\engine\model\EventoPartido$TipoEvento.class
 com\politecnics\football\entity\Team.class
+com\politecnics\football\controller\AuthController.class
 com\politecnics\football\entity\MatchEvent$MatchEventBuilder.class
 com\politecnics\football\engine\model\EstadisticasJugador.class
 com\politecnics\football\engine\model\Jugador.class
@@ -56,6 +57,7 @@ com\politecnics\football\entity\Equipo$EquipoBuilder.class
 com\politecnics\football\controller\StandingsController.class
 com\politecnics\football\mapper\TacticaMapper.class
 com\politecnics\football\controller\JugadorController.class
+com\politecnics\football\controller\TransferController.class
 com\politecnics\football\controller\SimulationController.class
 com\politecnics\football\dto\EventoPartidoDTO.class
 com\politecnics\football\controller\TeamController.class
@@ -69,6 +71,7 @@ com\politecnics\football\dto\StandingsDTO.class
 com\politecnics\football\service\SimulationService.class
 com\politecnics\football\engine\model\EventoPartido.class
 com\politecnics\football\repository\PlayerRepository.class
+com\politecnics\football\service\StatsUpdateService$1.class
 com\politecnics\football\mapper\EquipoMapperImpl.class
 com\politecnics\football\mapper\LigaMapperImpl.class
 com\politecnics\football\config\DataSeeder.class
@@ -100,6 +103,7 @@ com\politecnics\football\dto\LigaDTO.class
 com\politecnics\football\controller\LigaController.class
 com\politecnics\football\entity\Liga.class
 com\politecnics\football\controller\StatsController.class
+com\politecnics\football\entity\User$UserBuilder.class
 com\politecnics\football\engine\model\Equip.class
 com\politecnics\football\dto\MatchDTO.class
 com\politecnics\football\mapper\EntrenadorMapper.class
@@ -119,3 +123,4 @@ com\politecnics\football\config\SecurityConfig.class
 com\politecnics\football\mapper\JugadorMapper.class
 com\politecnics\football\controller\PartidoController.class
 com\politecnics\football\repository\MatchRepository.class
+com\politecnics\football\repository\UserRepository.class

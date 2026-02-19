@@ -5,6 +5,7 @@ import { getMatch, Match } from '@/lib/api';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { getMatch, Match } from '@/lib/api';
 
 export default function MatchDetailsPage() {
     const params = useParams();
@@ -62,14 +63,27 @@ export default function MatchDetailsPage() {
                             <p className="text-muted-foreground">Estadísticas detalladas disponibles en Fase 2.</p>
 
                             <div className="grid grid-cols-2 gap-8 mt-8">
-                                <div className="text-right">
+                                <div className="text-right space-y-2">
                                     <h4 className="font-medium mb-2">Goles Local</h4>
-                                    {/* Placeholder for scorers */}
-                                    <p className="text-sm text-neutral-500">-</p>
+                                    {match.events?.filter(e => e.type === 'GOAL' && e.teamId === Number(match.homeTeamId)).map(event => (
+                                        <div key={event.id} className="text-sm">
+                                            <span className="font-semibold">{event.playerName}</span> <span className="text-neutral-500">({event.minute}')</span>
+                                        </div>
+                                    ))}
+                                    {(!match.events || match.events.filter(e => e.type === 'GOAL' && e.teamId === Number(match.homeTeamId)).length === 0) && (
+                                        <p className="text-sm text-neutral-500">-</p>
+                                    )}
                                 </div>
-                                <div className="text-left">
+                                <div className="text-left space-y-2">
                                     <h4 className="font-medium mb-2">Goles Visitante</h4>
-                                    <p className="text-sm text-neutral-500">-</p>
+                                    {match.events?.filter(e => e.type === 'GOAL' && e.teamId === Number(match.awayTeamId)).map(event => (
+                                        <div key={event.id} className="text-sm">
+                                            <span className="font-semibold">{event.playerName}</span> <span className="text-neutral-500">({event.minute}')</span>
+                                        </div>
+                                    ))}
+                                    {(!match.events || match.events.filter(e => e.type === 'GOAL' && e.teamId === Number(match.awayTeamId)).length === 0) && (
+                                        <p className="text-sm text-neutral-500">-</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -83,6 +97,6 @@ export default function MatchDetailsPage() {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

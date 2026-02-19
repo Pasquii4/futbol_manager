@@ -12,5 +12,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByPlayed(boolean played);
     
     // Find the first matchday that has at least one unplayed match
+    // Find the first matchday that is not fully played
     Match findFirstByPlayedFalseOrderByMatchdayAsc();
+
+    List<Match> findAllByOrderByMatchdayAsc();
 }

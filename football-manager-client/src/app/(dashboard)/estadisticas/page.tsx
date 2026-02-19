@@ -1,75 +1,27 @@
-import api from "@/lib/api"
-import { LigaDTO, JugadorDTO, EquipoDTO } from "@/lib/types"
+import { getLeagueStatus, getTopScorers, getTopAssists, getLeagueStatus as getStatusAPI, PlayerStatsDTO } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trophy, Medal, Goal, Footprints } from "lucide-react"
 
-async function getStatsData() {
-    try {
-        const res = await api.get<LigaDTO[]>('/ligas');
-        if (!res.data || res.data.length === 0) return null;
-
-        // Use first league for now
-        const ligaId = res.data[0].id;
-        const ligaRes = await api.get<LigaDTO>(`/ligas/${ligaId}`);
-        return ligaRes.data;
-    } catch (error) {
-        console.error("Failed to fetch stats data", error);
-        return null;
-    }
-}
-
-function processTopScorers(equipos: EquipoDTO[]): JugadorDTO[] {
-    const allPlayers: JugadorDTO[] = [];
-    equipos.forEach(eq => {
-        if (eq.jugadores) {
-            // Add team name to player for display
-            eq.jugadores.forEach(j => {
-                // @ts-ignore
-                j.equipoNombre = eq.nombre;
-                allPlayers.push(j);
-            });
-        }
-    });
-
-    return allPlayers
-        .filter(j => (j.estadisticas?.goles || 0) > 0)
-        .sort((a, b) => (b.estadisticas?.goles || 0) - (a.estadisticas?.goles || 0))
-        .slice(0, 10);
-}
-
-function processTopAssisters(equipos: EquipoDTO[]): JugadorDTO[] {
-    const allPlayers: JugadorDTO[] = [];
-    equipos.forEach(eq => {
-        if (eq.jugadores) {
-            eq.jugadores.forEach(j => {
-                // @ts-ignore
-                j.equipoNombre = eq.nombre;
-                allPlayers.push(j);
-            });
-        }
-    });
-
-    return allPlayers
-        .filter(j => (j.estadisticas?.asistencias || 0) > 0)
-        .sort((a, b) => (b.estadisticas?.asistencias || 0) - (a.estadisticas?.asistencias || 0))
-        .slice(0, 10);
-}
-
 export default async function EstadisticasPage() {
-    const liga = await getStatsData();
+    // Parallel data fetching
+    const [leagueStatus, topScorers, topAssisters] = await Promise.all([
+        getLeagueStatus(),
+        getTopScorers(),
+        getTopAssists()
+    ]);
 
-    if (!liga || !liga.equipos) {
-        return <div className="p-8 text-center text-muted-foreground">Cargando datos o no hay liga activa...</div>;
+    if (!leagueStatus) {
+        return <div className="p-8 text-center text-muted-foreground">Cargando datos...</div>;
     }
 
-    const topScorers = processTopScorers(liga.equipos);
-    const topAssisters = processTopAssisters(liga.equipos);
-
-    // Calculate totals
-    const totalGoals = liga.equipos.reduce((acc, eq) => acc + (eq.golesFavor || 0), 0);
-    const totalMatches = liga.equipos.reduce((acc, eq) => acc + (eq.partidosJugados || 0), 0) / 2; // Each match counts twice
-    const avgGoals = totalMatches > 0 ? (totalGoals / totalMatches).toFixed(2) : "0.00";
+    // Goals per game - we need total goals for this. 
+    // Since we don't have a specific "LeagueStats" endpoint yet beyond status, we might need a small one or accept we don't show total goals yet or fetch matches.
+    // For now, let's remove strict dependency on 'all teams' to speed this up, or keep it simple.
+    // Actually, league status doesn't have total goals. 
+    // Let's hide the top cards for now or use placeholders until we make a proper /stats/league endpoint.
+    // Or we can quickly fetch all matches? No, that's heavy.
+    // Let's display what we have: Scorers and Assists.
 
     return (
         <div className="space-y-8">
@@ -78,41 +30,18 @@ export default async function EstadisticasPage() {
                     <Trophy size={32} />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Estadísticas de {liga.nombre}</h1>
-                    <p className="text-muted-foreground">Jornada {liga.jornadaActual} de {liga.totalJornadas}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Estadísticas de La Liga</h1>
+                    <p className="text-muted-foreground">Jornada {leagueStatus.currentMatchday} de {leagueStatus.totalMatchdays}</p>
                 </div>
             </div>
 
             {/* Config Cards */}
+            {/* 
             <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Goles Totales</CardTitle>
-                        <Goal className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{totalGoals}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Partidos Jugados</CardTitle>
-                        <Footprints className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{totalMatches}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Goles por Partido</CardTitle>
-                        <Mediachart className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{avgGoals}</div>
-                    </CardContent>
-                </Card>
-            </div>
+                 Configuration Cards Placeholder 
+                 We can re-enable these when we have a specialized endpoint 
+            </div> 
+            */}
 
             <div className="grid md:grid-cols-2 gap-8">
                 {/* Top Scorers */}
@@ -144,10 +73,9 @@ export default async function EstadisticasPage() {
                                     topScorers.map((player, index) => (
                                         <TableRow key={player.id}>
                                             <TableCell className="font-medium">#{index + 1}</TableCell>
-                                            <TableCell>{player.nombre} {player.apellido}</TableCell>
-                                            {/* @ts-ignore */}
-                                            <TableCell className="text-muted-foreground">{player.equipoNombre}</TableCell>
-                                            <TableCell className="text-right font-bold">{player.estadisticas?.goles}</TableCell>
+                                            <TableCell>{player.name}</TableCell>
+                                            <TableCell className="text-muted-foreground">{player.teamName}</TableCell>
+                                            <TableCell className="text-right font-bold">{player.goalsScored}</TableCell>
                                         </TableRow>
                                     ))
                                 )}
@@ -185,10 +113,9 @@ export default async function EstadisticasPage() {
                                     topAssisters.map((player, index) => (
                                         <TableRow key={player.id}>
                                             <TableCell className="font-medium">#{index + 1}</TableCell>
-                                            <TableCell>{player.nombre} {player.apellido}</TableCell>
-                                            {/* @ts-ignore */}
-                                            <TableCell className="text-muted-foreground">{player.equipoNombre}</TableCell>
-                                            <TableCell className="text-right font-bold">{player.estadisticas?.asistencias}</TableCell>
+                                            <TableCell>{player.name}</TableCell>
+                                            <TableCell className="text-muted-foreground">{player.teamName}</TableCell>
+                                            <TableCell className="text-right font-bold">{player.assists}</TableCell>
                                         </TableRow>
                                     ))
                                 )}

@@ -47,6 +47,8 @@ public class TeamController {
                 .stadium(team.getStadium())
                 .budget(team.getBudget())
                 .overallRating(team.getOverallRating())
+                .formation(team.getFormation())
+                .mentality(team.getMentality())
                 .players(playerDTOs)
                 .build();
     }
@@ -65,6 +67,21 @@ public class TeamController {
                 .yellowCards(player.getYellowCards())
                 .redCards(player.getRedCards())
                 .matchesPlayed(player.getMatchesPlayed())
+                .matchesPlayed(player.getMatchesPlayed())
+                .marketValue(player.getMarketValue())
                 .build();
+    }
+
+    @PutMapping("/{teamId}/tactics")
+    public ResponseEntity<TeamDTO> updateTactics(@PathVariable String teamId, @RequestParam String formation, @RequestParam String mentality) {
+        return teamRepository.findByTeamId(teamId)
+                .map(team -> {
+                    team.setFormation(formation);
+                    team.setMentality(mentality);
+                    return teamRepository.save(team);
+                })
+                .map(this::convertToDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

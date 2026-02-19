@@ -11,7 +11,7 @@ public class SimulationService {
     private com.politecnics.football.repository.MatchRepository matchRepository;
     
     @Autowired
-    private com.politecnics.football.engine.MatchSimulationEngine matchSimulationEngine;
+    private com.politecnics.football.service.simulation.MatchEngine matchEngine;
     
     @Autowired
     private StatsUpdateService statsUpdateService;
@@ -33,7 +33,7 @@ public class SimulationService {
         
         for (com.politecnics.football.entity.Match match : matches) {
             if (!match.isPlayed()) {
-                matchSimulationEngine.simulateMatch(match);
+                matchEngine.simulateMatch(match);
                 matchRepository.save(match);
                 statsUpdateService.updateStatsCoordinates(match);
             }

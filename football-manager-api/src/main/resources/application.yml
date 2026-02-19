@@ -6,8 +6,8 @@ spring:
     name: football-manager-api
   
   datasource:
-    # H2 Database (Default for Dev)
-    url: jdbc:h2:mem:football_manager;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    # H2 Database (File-based for Persistence)
+    url: jdbc:h2:file:./data/football_manager;AUTO_SERVER=TRUE
     username: sa
     password: password
     driver-class-name: org.h2.Driver

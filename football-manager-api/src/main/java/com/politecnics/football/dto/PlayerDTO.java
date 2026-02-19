@@ -21,6 +21,7 @@ public class PlayerDTO {
     private Integer assists;
     private Integer yellowCards;
     private Integer redCards;
+    private Long marketValue;
     private Integer matchesPlayed;
     private String teamId;
     private String teamName;

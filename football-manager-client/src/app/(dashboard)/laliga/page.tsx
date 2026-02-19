@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api, StandingsItem } from '@/app/services/api';
+import { getStandings, StandingsItem } from '@/lib/api';
 
 export default function StandingsPage() {
     const [standings, setStandings] = useState<StandingsItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.getStandings()
+        getStandings()
             .then(setStandings)
             .catch(console.error)
             .finally(() => setLoading(false));

@@ -24,9 +24,20 @@ public class LeagueController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private com.politecnics.football.repository.LeagueRepository leagueRepository;
+
+    @Autowired
+    private com.politecnics.football.service.DataLoadService dataLoadService;
+
     @GetMapping("/status")
     public ResponseEntity<LeagueStatusDTO> getLeagueStatus() {
         List<Match> matches = matchRepository.findAll();
+        try {
+            java.nio.file.Files.writeString(java.nio.file.Path.of("status.log"), 
+                "Check Status: Matches=" + matches.size() + "\n", 
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception e) {}
         
         if (matches.isEmpty()) {
             return ResponseEntity.ok(LeagueStatusDTO.builder()
@@ -55,40 +66,50 @@ public class LeagueController {
         if (isFinished) currentMatchday = totalMatchdays; // cap at last for display or keep as is? 
         // Logic: if all played, we are at "End of Season".
 
+        // Fetch basic league info (assuming ID 1)
+        // Fetch basic league info dynamically (not hardcoded ID 1)
+        com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        Long managedTeamId = league != null ? league.getManagedTeamId() : null;
+
         return ResponseEntity.ok(LeagueStatusDTO.builder()
                 .currentMatchday(isFinished ? totalMatchdays : currentMatchday)
                 .totalMatchdays(totalMatchdays)
                 .seasonYear(2025)
                 .isStarted(true)
                 .isFinished(isFinished)
+                .managedTeamId(managedTeamId)
                 .build());
     }
 
     @PostMapping("/reset")
-    @Transactional
     public ResponseEntity<String> resetLeague() {
-        // 1. Reset Matches
-        List<Match> matches = matchRepository.findAll();
-        for (Match match : matches) {
-            match.setPlayed(false);
-            match.setHomeGoals(0);
-            match.setAwayGoals(0);
-            match.setHomeGoals(null); // Or 0? entity has Integer
-            match.setAwayGoals(null);
+        try {
+            dataLoadService.resetLeagueData();
+            return ResponseEntity.ok("League reset and re-seeded successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Failed to reset league: " + e.getMessage());
         }
-        matchRepository.saveAll(matches);
+    }
 
-        // 2. Reset Players Stats
-        List<Player> players = playerRepository.findAll();
-        for (Player player : players) {
-            player.setGoalsScored(0);
-            player.setAssists(0);
-            player.setYellowCards(0);
-            player.setRedCards(0);
-            player.setMatchesPlayed(0);
+    @PostMapping("/select-team/{teamId}")
+    @Transactional
+    public ResponseEntity<String> selectTeam(@PathVariable Long teamId) {
+        // Implement logic to set managedTeamId on the active league
+        com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        
+        if (league == null) {
+            // Create if not exists (should exist from init, but safety check)
+            league = com.politecnics.football.entity.League.builder()
+                .name("LaLiga EA Sports")
+                .country("Spain")
+                .seasonYear(2025)
+                .build();
+            league = leagueRepository.save(league);
         }
-        playerRepository.saveAll(players);
-
-        return ResponseEntity.ok("League reset successfully");
+        
+        league.setManagedTeamId(teamId);
+        leagueRepository.save(league);
+        return ResponseEntity.ok("Team selected successfully");
     }
 }

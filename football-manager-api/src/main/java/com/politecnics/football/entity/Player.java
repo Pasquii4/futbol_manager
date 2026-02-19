@@ -25,6 +25,10 @@ public class Player {
     private Integer age;
     private Integer overall;
     private Integer potential;
+    
+    @Column(name = "market_value")
+    private Long marketValue; // Value in Euro
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")

@@ -19,4 +19,6 @@ public class TeamDTO {
     private Long budget;
     private Integer overallRating;
     private List<PlayerDTO> players;
+    private String formation;
+    private String mentality;
 }

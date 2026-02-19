@@ -1,6 +1,7 @@
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\config\DataSeeder.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\config\OpenApiConfig.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\config\SecurityConfig.java
+C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\AuthController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\EquipoController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\JugadorController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\LeagueController.java
@@ -12,6 +13,7 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\StandingsController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\StatsController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\TeamController.java
+C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\TransferController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\ClasificacionDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\EntrenadorDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\EquipoDTO.java
@@ -30,7 +32,6 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\TacticaDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\TeamDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\engine\adapter\MotorSimulacionAdapter.java
-C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\engine\MatchSimulationEngine.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\engine\model\Entrenador.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\engine\model\Equip.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\engine\model\EstadisticasJugador.java
@@ -60,6 +61,7 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\Presupuesto.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\Tactica.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\Team.java
+C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\User.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\exception\GlobalExceptionHandler.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\FootballManagerApplication.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\mapper\EntrenadorMapper.java
@@ -77,6 +79,7 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\repository\PartidoRepository.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\repository\PlayerRepository.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\repository\TeamRepository.java
+C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\repository\UserRepository.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\service\DataLoadService.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\service\EquipoService.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\service\FixtureGenerator.java

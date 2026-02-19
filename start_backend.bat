@@ -8,12 +8,20 @@ echo   Starting Backend Service
 echo ==========================================
 
 REM 1. Set Java Environment
-if not "%PROVIDED_JAVA_HOME%"=="" (
-    echo [INFO] Using provided JDK: %PROVIDED_JAVA_HOME%
-    set "JAVA_HOME=%PROVIDED_JAVA_HOME%"
-    set "PATH=%PROVIDED_JAVA_HOME%\bin;%PATH%"
+set "JAVA_HOME=%PROVIDED_JAVA_HOME:"=%"
+
+if not "%JAVA_HOME%"=="" (
+    echo [INFO] Using provided JDK: "%JAVA_HOME%"
+    set "PATH=%JAVA_HOME%\bin;%PATH%"
 ) else (
-    echo [INFO] Using system Java (if available)
+    REM Check if local JDK exists relative to this script
+    if exist "%~dp0.tools\jdk-17" (
+        echo [INFO] Using local JDK from .tools
+        set "JAVA_HOME=%~dp0.tools\jdk-17"
+        set "PATH=%~dp0.tools\jdk-17\bin;%PATH%"
+    ) else (
+        echo [INFO] Using system Java (if available)
+    )
 )
 
 REM 2. Set Maven Environment

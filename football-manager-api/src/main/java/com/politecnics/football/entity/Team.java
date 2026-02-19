@@ -27,6 +27,13 @@ public class Team {
     @Column(name = "overall_rating")
     private Integer overallRating;
 
+    @Builder.Default
+    private String formation = "4-3-3";
+    
+    @Builder.Default
+    private String mentality = "Balanced";
+
+
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Player> players;
 }

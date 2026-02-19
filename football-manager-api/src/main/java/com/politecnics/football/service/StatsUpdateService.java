@@ -1,17 +1,12 @@
 package com.politecnics.football.service;
 
 import com.politecnics.football.entity.Match;
+import com.politecnics.football.entity.MatchEvent;
 import com.politecnics.football.entity.Player;
-import com.politecnics.football.entity.Team;
 import com.politecnics.football.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class StatsUpdateService {
@@ -19,68 +14,40 @@ public class StatsUpdateService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    private final Random random = new Random();
-
     @Transactional
     public void updateStatsCoordinates(Match match) {
-        // Update stats for home team
-        distributeGoals(match.getHomeTeam(), match.getHomeGoals());
-        updateMatchPlayed(match.getHomeTeam());
+        // Update Matches Played (Simplified: All players in team? No, we don't have lineups yet)
+        // For MVP, we only update players who have events or we should ideally have a lineup.
+        // Since we don't have lineups, maybe we skip matchesPlayed or assume 11 randoms?
+        // Let's just update goalscorers/carded players for now to be safe, 
+        // OR better: Update matchesPlayed for players involved in events.
         
-        // Update stats for away team
-        distributeGoals(match.getAwayTeam(), match.getAwayGoals());
-        updateMatchPlayed(match.getAwayTeam());
-    }
-
-    private void updateMatchPlayed(Team team) {
-        if (team.getPlayers() == null) return;
-        // Assume first 11 players played for simplicity
-        // In a real manager, we would select line-ups
-        int playersToUpdate = Math.min(11, team.getPlayers().size());
-        for (int i = 0; i < playersToUpdate; i++) {
-            Player p = team.getPlayers().get(i);
-            p.setMatchesPlayed(p.getMatchesPlayed() + 1);
-            // Small chance of yellow card
-            if (random.nextDouble() < 0.15) {
-                p.setYellowCards(p.getYellowCards() + 1);
-            }
-            playerRepository.save(p);
-        }
-    }
-
-    private void distributeGoals(Team team, int goals) {
-        if (goals == 0 || team.getPlayers() == null || team.getPlayers().isEmpty()) return;
-
-        // Give higher probability to attackers
-        List<Player> attackers = team.getPlayers().stream()
-                .filter(p -> "ST".equals(p.getPosition()) || "RW".equals(p.getPosition()) || "LW".equals(p.getPosition()))
-                .collect(Collectors.toList());
-        
-        List<Player> midfielders = team.getPlayers().stream()
-                .filter(p -> p.getPosition().contains("M") && !attackers.contains(p))
-                .collect(Collectors.toList());
-
-        List<Player> candidates = new ArrayList<>();
-        // Weight: Attackers 3x entries, Midfielders 1x entry
-        if (!attackers.isEmpty()) {
-            for (Player p : attackers) {
-                candidates.add(p);
-                candidates.add(p);
-                candidates.add(p);
+        // Actually, let's just process events.
+        if (match.getEvents() != null) {
+            for (MatchEvent event : match.getEvents()) {
+                Player player = event.getPlayer();
+                if (player != null) {
+                    switch (event.getType()) {
+                        case GOAL:
+                            player.setGoalsScored(player.getGoalsScored() + 1);
+                            break;
+                        case ASSIST: // If we had assists
+                            player.setAssists(player.getAssists() + 1);
+                            break;
+                        case YELLOW_CARD:
+                            player.setYellowCards(player.getYellowCards() + 1);
+                            break;
+                        case RED_CARD:
+                            player.setRedCards(player.getRedCards() + 1);
+                            break;
+                    }
+                    // Generic "Played" increment? 
+                    // If we increment here, a player with 2 goals gets 2 matches played? No.
+                    // We should track unique players.
+                }
             }
         }
-        if (!midfielders.isEmpty()) {
-            candidates.addAll(midfielders);
-        }
-        // Fallback to all players if no forwards/mids
-        if (candidates.isEmpty()) {
-            candidates.addAll(team.getPlayers());
-        }
-
-        for (int i = 0; i < goals; i++) {
-            Player scorer = candidates.get(random.nextInt(candidates.size()));
-            scorer.setGoalsScored(scorer.getGoalsScored() + 1);
-            playerRepository.save(scorer);
-        }
+        
+        // TODO: In future, when lineups exist, iterate lineup and increment matchesPlayed.
     }
 }
