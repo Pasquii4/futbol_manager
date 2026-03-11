@@ -37,6 +37,15 @@ public class Match {
 
     private LocalDate matchDate;
 
+    // Advanced stats
+    private Integer possession; // Home possession percentage (0-100)
+
+    @Column(name = "home_shots_on_target")
+    private Integer homeShotsOnTarget;
+
+    @Column(name = "away_shots_on_target")
+    private Integer awayShotsOnTarget;
+
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<MatchEvent> events = new ArrayList<>();

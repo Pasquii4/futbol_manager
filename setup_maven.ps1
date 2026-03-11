@@ -18,7 +18,9 @@ if (-not [string]::IsNullOrWhiteSpace($JavaHomeParam)) {
 
 # 2. Check Java Availability (Soft Check)
 try {
-    $javaOutput = java -version 2>&1 | Out-String
+    # Prefer explicitly set JAVA_HOME if available
+    $javaPath = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME "bin\java.exe" } else { "java" }
+    & $javaPath -version 2>&1 | Out-String | Out-Null
     Write-Host "[OK] Java found." -ForegroundColor Green
 }
 catch {

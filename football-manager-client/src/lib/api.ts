@@ -13,7 +13,7 @@ export interface LeagueStatus {
 
 export interface StandingsItem {
     position: number;
-    teamId: string; // Changed to string to match backend ID strings like "real_madrid"
+    teamId: number;
     teamName: string;
     played: number;
     won: number;
@@ -37,9 +37,9 @@ export interface MatchEvent {
 export interface Match {
     id: number;
     matchday: number;
-    homeTeamId: string;
+    homeTeamId: number;
     homeTeamName: string;
-    awayTeamId: string;
+    awayTeamId: number;
     awayTeamName: string;
     homeGoals: number;
     awayGoals: number;
@@ -58,6 +58,7 @@ export interface Player {
     potential: number;
     marketValue: number;
     teamId: string;
+    teamName?: string;
     goalsScored?: number;
     assists?: number;
     yellowCards?: number;
@@ -66,15 +67,15 @@ export interface Player {
 }
 
 export interface Team {
-    id: number; // Changed to number to match backend
-    teamId: string; // The text ID e.g. "real_madrid"
+    id: number;
+    teamId: string;
     name: string;
     stadium: string;
     budget: number;
     overallRating: number;
     formation?: string;
     mentality?: string;
-    players?: Player[];  // Optional because sometimes we might fetch list without players if optimized, but controller returns them
+    players?: Player[];
 }
 
 // API Instance
@@ -84,38 +85,6 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
-
-// Methods
-export const getLeagueStatus = async (): Promise<LeagueStatus> => {
-    const response = await api.get('/league/status');
-    return response.data;
-};
-
-export const getStandings = async (): Promise<StandingsItem[]> => {
-    const response = await api.get('/standings');
-    return response.data;
-};
-
-export const getMatches = async (matchday?: number): Promise<Match[]> => {
-    const url = matchday ? `/matches?matchday=${matchday}` : '/matches';
-    const response = await api.get(url);
-    return response.data;
-};
-
-export const getMatch = async (id: number): Promise<Match> => {
-    const response = await api.get(`/matches/${id}`);
-    return response.data;
-};
-
-export const getTeams = async (): Promise<Team[]> => {
-    const response = await api.get('/teams');
-    return response.data;
-};
-
-export const getTeam = async (id: string): Promise<Team> => {
-    const response = await api.get(`/teams/${id}`);
-    return response.data;
-};
 
 // Stats Interfaces
 export interface PlayerStatsDTO {
@@ -129,6 +98,72 @@ export interface PlayerStatsDTO {
     matchesPlayed: number;
     overall: number;
 }
+
+// ============ League ============
+
+export const getLeagueStatus = async (): Promise<LeagueStatus> => {
+    const response = await api.get('/league/status');
+    return response.data;
+};
+
+export const resetLeague = async (): Promise<void> => {
+    await api.post('/league/reset');
+};
+
+export const selectTeam = async (teamId: number): Promise<void> => {
+    await api.post(`/league/select-team/${teamId}`);
+};
+
+// ============ Standings ============
+
+export const getStandings = async (): Promise<StandingsItem[]> => {
+    const response = await api.get('/standings');
+    return response.data;
+};
+
+// ============ Matches ============
+
+export const getMatches = async (matchday?: number): Promise<Match[]> => {
+    const url = matchday ? `/matches?matchday=${matchday}` : '/matches';
+    const response = await api.get(url);
+    return response.data;
+};
+
+export const getMatch = async (id: number): Promise<Match> => {
+    const response = await api.get(`/matches/${id}`);
+    return response.data;
+};
+
+// ============ Teams ============
+
+export const getTeams = async (): Promise<Team[]> => {
+    const response = await api.get('/teams');
+    return response.data;
+};
+
+export const getTeam = async (id: string): Promise<Team> => {
+    const response = await api.get(`/teams/${id}`);
+    return response.data;
+};
+
+export const updateTactics = async (teamId: string, formation: string, mentality: string): Promise<Team> => {
+    const response = await api.put(`/teams/${teamId}/tactics?formation=${formation}&mentality=${mentality}`);
+    return response.data;
+};
+
+// ============ Simulation ============
+
+export const simulateMatchday = async (): Promise<string> => {
+    const response = await api.post('/simulate/matchday');
+    return response.data;
+};
+
+export const simulateSeason = async (): Promise<string> => {
+    const response = await api.post('/simulate/season');
+    return response.data;
+};
+
+// ============ Stats ============
 
 export const getTopScorers = async (): Promise<PlayerStatsDTO[]> => {
     const response = await api.get('/stats/top-scorers');
@@ -145,18 +180,12 @@ export const getTopRated = async (): Promise<PlayerStatsDTO[]> => {
     return response.data;
 };
 
+// ============ Transfers ============
+
 export const buyPlayer = async (playerId: number, teamId: number): Promise<string> => {
     const response = await api.post(`/transfers/buy?playerId=${playerId}&teamId=${teamId}`);
     return response.data;
 };
 
-export const updateTactics = async (teamId: string, formation: string, mentality: string): Promise<Team> => {
-    const response = await api.put(`/teams/${teamId}/tactics?formation=${formation}&mentality=${mentality}`);
-    return response.data;
-};
-
-export const resetLeague = async (): Promise<void> => {
-    await api.post('/league/reset');
-};
-
 export default api;
+

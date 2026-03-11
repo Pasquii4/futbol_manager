@@ -1,68 +1,69 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
+
 echo ===================================================
-echo   FOOTBALL MANAGER - STARTUP SCRIPT
+echo   FOOTBALL MANAGER - ROBUST STARTUP SCRIPT
 echo ===================================================
-echo.
 
 set "ROOT_DIR=%~dp0"
-cd /d "%ROOT_DIR%"
+set "TOOLS_DIR=%ROOT_DIR%.tools"
+set "JDK_DIR=%TOOLS_DIR%\jdk-17"
+set "MAVEN_DIR=%TOOLS_DIR%\apache-maven-3.9.6"
 
-REM 1. Setup JDK 17
-echo [1/4] Ensuring JDK 17 is installed...
-powershell -ExecutionPolicy Bypass -File "setup_jdk.ps1"
-if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Failed to download JDK 17.
+echo [1/3] Configuring Environment...
+
+REM Check JDK
+if not exist "%JDK_DIR%\bin\java.exe" (
+    echo [INFO] JDK not found at %JDK_DIR%, trying setup...
+    powershell -ExecutionPolicy Bypass -File "setup_jdk.ps1"
+)
+
+if not exist "%JDK_DIR%\bin\java.exe" (
+    echo [ERROR] JDK 17 could not be found or installed!
     pause
     exit /b 1
 )
 
-set "LOCAL_JAVA_HOME=%ROOT_DIR%.tools\jdk-17"
-echo [INFO] Using Portable JDK: %LOCAL_JAVA_HOME%
+set "JAVA_HOME=%JDK_DIR%"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
 
-REM Validate
-if not exist "%LOCAL_JAVA_HOME%\bin\java.exe" (
-    echo [ERROR] Expected JDK at %LOCAL_JAVA_HOME% but not found.
+REM Check Maven
+if not exist "%MAVEN_DIR%\bin\mvn.cmd" (
+    echo [INFO] Maven not found, trying setup...
+    powershell -ExecutionPolicy Bypass -File "setup_maven.ps1" -JavaHomeParam "%JAVA_HOME%"
+)
+
+if not exist "%MAVEN_DIR%\bin\mvn.cmd" (
+    echo [ERROR] Maven could not be found or installed!
     pause
     exit /b 1
 )
 
-REM 2. Setup Maven
+set "MAVEN_HOME=%MAVEN_DIR%"
+set "PATH=%MAVEN_HOME%\bin;%PATH%"
+
+echo [OK] Environment configured correctly.
+echo     JAVA_HOME: %JAVA_HOME%
+echo     Maven:     %MAVEN_HOME%
 echo.
-echo [2/4] Checking Maven...
-powershell -ExecutionPolicy Bypass -File "setup_maven.ps1" -JavaHomeParam "%LOCAL_JAVA_HOME%"
 
-if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Failed to setup Maven.
-    pause
-    exit /b 1
-)
+REM 2. Start Backend
+echo [2/3] Starting Backend in new window...
+start "Football Manager Backend" cmd /k "set JAVA_HOME=%JDK_DIR%&& set PATH=%JDK_DIR%\bin;%MAVEN_DIR%\bin;%PATH%&& cd /d %ROOT_DIR%football-manager-api && echo Starting Spring Boot... && mvn spring-boot:run"
 
-REM 3. Start Backend
-echo.
-echo [3/4] Starting Backend...
-REM We use /D to specify the working directory for the new process to be the root, 
-REM so it can find start_backend.bat and the football-manager-api folder.
-start "Football Manager Backend" /D "%ROOT_DIR%" cmd /k "call start_backend.bat "%LOCAL_JAVA_HOME%""
-
-REM Wait a bit for backend to initialize (optional, but nice)
+REM Wait for backend to at least start booting
 timeout /t 5 /nobreak >nul
 
-REM 4. Start Frontend
-echo.
-echo [4/4] Starting Frontend...
-if exist "%ROOT_DIR%football-manager-client" (
-    start "Football Manager Client" /D "%ROOT_DIR%football-manager-client" cmd /k "echo Starting Next.js... & npm run dev"
-) else (
-    echo [ERROR] football-manager-client directory not found!
-    pause
-)
+REM 3. Start Frontend
+echo [3/3] Starting Frontend in new window...
+start "Football Manager Client" cmd /k "cd /d %ROOT_DIR%football-manager-client && echo Starting Next.js... && npm run dev"
 
 echo.
 echo ===================================================
-echo   Services are launching in separate windows.
+echo   Services are launching!
 echo   Frontend: http://localhost:3000
-echo   Backend:  http://localhost:8080/api
+echo   Backend API: http://localhost:8080/api
 echo ===================================================
-echo   You can close this window now, or keep it open.
+echo   Check the other two windows for logs/errors.
+echo.
 pause

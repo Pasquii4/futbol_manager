@@ -2,17 +2,16 @@ package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.LeagueStatusDTO;
 import com.politecnics.football.entity.Match;
-import com.politecnics.football.entity.Player;
 import com.politecnics.football.repository.MatchRepository;
-import com.politecnics.football.repository.PlayerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/league")
 @CrossOrigin(origins = "*")
@@ -20,9 +19,6 @@ public class LeagueController {
 
     @Autowired
     private MatchRepository matchRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
 
     @Autowired
     private com.politecnics.football.repository.LeagueRepository leagueRepository;
@@ -33,17 +29,13 @@ public class LeagueController {
     @GetMapping("/status")
     public ResponseEntity<LeagueStatusDTO> getLeagueStatus() {
         List<Match> matches = matchRepository.findAll();
-        try {
-            java.nio.file.Files.writeString(java.nio.file.Path.of("status.log"), 
-                "Check Status: Matches=" + matches.size() + "\n", 
-                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-        } catch (Exception e) {}
+        log.debug("League status check: {} total matches found", matches.size());
         
         if (matches.isEmpty()) {
             return ResponseEntity.ok(LeagueStatusDTO.builder()
                     .currentMatchday(0)
                     .totalMatchdays(0)
-                    .seasonYear(2025)
+                    .seasonYear(2025) // Default for empty
                     .isStarted(false)
                     .isFinished(false)
                     .build());
@@ -66,15 +58,15 @@ public class LeagueController {
         if (isFinished) currentMatchday = totalMatchdays; // cap at last for display or keep as is? 
         // Logic: if all played, we are at "End of Season".
 
-        // Fetch basic league info (assuming ID 1)
-        // Fetch basic league info dynamically (not hardcoded ID 1)
+        // Fetch basic league info dynamically
         com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
         Long managedTeamId = league != null ? league.getManagedTeamId() : null;
+        int seasonYear = league != null && league.getSeasonYear() != null ? league.getSeasonYear() : 2025;
 
         return ResponseEntity.ok(LeagueStatusDTO.builder()
                 .currentMatchday(isFinished ? totalMatchdays : currentMatchday)
                 .totalMatchdays(totalMatchdays)
-                .seasonYear(2025)
+                .seasonYear(seasonYear)
                 .isStarted(true)
                 .isFinished(isFinished)
                 .managedTeamId(managedTeamId)
@@ -99,11 +91,11 @@ public class LeagueController {
         com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
         
         if (league == null) {
-            // Create if not exists (should exist from init, but safety check)
+            // This case should rarely happen if data is initialized
             league = com.politecnics.football.entity.League.builder()
                 .name("LaLiga EA Sports")
                 .country("Spain")
-                .seasonYear(2025)
+                .seasonYear(2025) 
                 .build();
             league = leagueRepository.save(league);
         }

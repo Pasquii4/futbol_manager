@@ -35,10 +35,27 @@ public class Player {
     @JsonIgnore // Prevent infinite recursion in default serialization
     private Team team;
 
-    // Stats fields can be added here or in a separate SeasonStats entity
+    // Stats fields
+    @Builder.Default
     private Integer goalsScored = 0;
+    @Builder.Default
     private Integer assists = 0;
+    @Builder.Default
     private Integer yellowCards = 0;
+    @Builder.Default
     private Integer redCards = 0;
+    @Builder.Default
     private Integer matchesPlayed = 0;
+
+    // Simulation fields
+    @Column(name = "injured")
+    @Builder.Default
+    private Boolean injured = false;
+
+    @Column(name = "injury_duration")
+    @Builder.Default
+    private Integer injuryDuration = 0; // Matchdays remaining
+
+    @Builder.Default
+    private Double form = 7.0; // 1-10 scale, affects performance
 }

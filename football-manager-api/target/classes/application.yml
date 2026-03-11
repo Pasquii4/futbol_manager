@@ -4,28 +4,9 @@ server:
 spring:
   application:
     name: football-manager-api
-  
-  datasource:
-    # H2 Database (File-based for Persistence)
-    url: jdbc:h2:file:./data/football_manager;AUTO_SERVER=TRUE
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
-    # PostgreSQL (Uncomment to use real DB)
-    # url: jdbc:postgresql://localhost:5432/football_manager
-    # username: postgres
-    # password: password
-    # driver-class-name: org.postgresql.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        # dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: false
+
+  profiles:
+    active: dev  # Default profile (H2). Use 'prod' for PostgreSQL.
 
   # JWT Configuration
   security:

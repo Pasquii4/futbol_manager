@@ -4,15 +4,16 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Play, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import api from "@/lib/api"
+import { simulateMatchday } from "@/lib/api"
 
 interface SimulationControlProps {
     ligaId: number
     jornadaActual: number
     finalizada: boolean
+    onSimulate?: () => void
 }
 
-export function SimulationControl({ ligaId, jornadaActual, finalizada }: SimulationControlProps) {
+export function SimulationControl({ ligaId, jornadaActual, finalizada, onSimulate }: SimulationControlProps) {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
@@ -21,8 +22,12 @@ export function SimulationControl({ ligaId, jornadaActual, finalizada }: Simulat
 
         setLoading(true)
         try {
-            await api.post(`/simulate/matchday`)
-            router.refresh() // Refresh server components to show new stats/table
+            await simulateMatchday()
+            if (onSimulate) {
+                onSimulate()
+            } else {
+                router.refresh()
+            }
         } catch (error) {
             console.error("Simulation failed", error)
             alert("Error al simular la jornada")
