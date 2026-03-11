@@ -19,10 +19,16 @@ public class Equipo {
     @Column(nullable = false)
     private String nombre;
 
+    @Column(unique = true)
+    private String teamId;
+
     private Integer anyFundacion;
     private String ciudad;
     private String estadio;
     private String presidente;
+    
+    @Column(name = "overall_rating")
+    private Integer calidadRating;
 
     @Builder.Default
     private Integer puntos = 0;
@@ -61,4 +67,32 @@ public class Equipo {
     
     @Embedded
     private Presupuesto presupuesto;
+    
+    // --- Adapter methods for Team backward compatibility ---
+    public String getStadium() { return this.estadio; }
+    public void setStadium(String stadium) { this.estadio = stadium; }
+    
+    public Long getBudget() { 
+        return this.presupuesto != null && this.presupuesto.getSaldo() != null ? this.presupuesto.getSaldo().longValue() : 0L; 
+    }
+    public void setBudget(Long budget) { 
+        if(this.presupuesto == null) this.presupuesto = new Presupuesto(0.0, 0.0, 0.0, 0.0);
+        this.presupuesto.setSaldo(budget != null ? budget.doubleValue() : 0.0);
+    }
+    
+    public String getFormation() {
+        return (this.tactica != null && this.tactica.getFormacion() != null) ? this.tactica.getFormacion().name() : "4-3-3";
+    }
+    public void setFormation(String formation) {
+        if(this.tactica == null) this.tactica = new Tactica();
+        /* not supported yet */
+    }
+    
+    public String getMentality() {
+        return "Equilibrada";
+    }
+    public void setMentality(String mentality) {
+        if(this.tactica == null) this.tactica = new Tactica();
+        /* not supported yet */
+    }
 }

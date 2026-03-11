@@ -18,7 +18,7 @@ public class TeamDTO {
     private String stadium;
     private Long budget;
     private Integer overallRating;
-    private List<PlayerDTO> players;
+    private List<PlayerDTO> jugadores;
     private String formation;
     private String mentality;
 }

@@ -1,6 +1,6 @@
 package com.politecnics.football.controller;
 
-import com.politecnics.football.dto.JugadorDTO;
+import com.politecnics.football.dto.PlayerDTO;
 import com.politecnics.football.service.JugadorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,19 +19,19 @@ public class JugadorController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener detalle de un jugador")
-    public ResponseEntity<JugadorDTO> getJugadorById(@PathVariable Long id) {
+    public ResponseEntity<PlayerDTO> getJugadorById(@PathVariable Long id) {
         return ResponseEntity.ok(jugadorService.getJugadorById(id));
     }
     
     @GetMapping("/equipo/{equipoId}")
     @Operation(summary = "Obtener jugadores de un equipo")
-    public ResponseEntity<List<JugadorDTO>> getJugadoresByEquipo(@PathVariable Long equipoId) {
+    public ResponseEntity<List<PlayerDTO>> getJugadoresByEquipo(@PathVariable Long equipoId) {
         return ResponseEntity.ok(jugadorService.getJugadoresByEquipo(equipoId));
     }
     
     @GetMapping("/mercado")
     @Operation(summary = "Obtener jugadores libres (mercado)")
-    public ResponseEntity<List<JugadorDTO>> getMercadoFichajes() {
+    public ResponseEntity<List<PlayerDTO>> getMercadoFichajes() {
         return ResponseEntity.ok(jugadorService.getMercadoFichajes());
     }
 }

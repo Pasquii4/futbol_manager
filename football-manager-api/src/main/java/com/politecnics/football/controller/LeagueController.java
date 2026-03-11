@@ -102,6 +102,6 @@ public class LeagueController {
         
         league.setManagedTeamId(teamId);
         leagueRepository.save(league);
-        return ResponseEntity.ok("Team selected successfully");
+        return ResponseEntity.ok("Equipo selected successfully");
     }
 }

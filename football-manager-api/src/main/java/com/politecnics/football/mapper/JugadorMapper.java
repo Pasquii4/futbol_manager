@@ -1,6 +1,6 @@
 package com.politecnics.football.mapper;
 
-import com.politecnics.football.dto.JugadorDTO;
+import com.politecnics.football.dto.PlayerDTO;
 import com.politecnics.football.dto.EstadisticasJugadorDTO;
 import com.politecnics.football.dto.LesionDTO;
 import com.politecnics.football.entity.Jugador;
@@ -10,8 +10,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface JugadorMapper {
-    JugadorDTO toDTO(Jugador jugador);
-    Jugador toEntity(JugadorDTO dto);
+    PlayerDTO toDTO(Jugador jugador);
+    Jugador toEntity(PlayerDTO dto);
     
     EstadisticasJugadorDTO toEstadisticasDTO(EstadisticasJugador estadisticas);
     EstadisticasJugador toEstadisticasEntity(EstadisticasJugadorDTO dto);

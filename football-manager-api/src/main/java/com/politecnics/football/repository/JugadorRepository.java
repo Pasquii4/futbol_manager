@@ -18,4 +18,12 @@ public interface JugadorRepository extends JpaRepository<Jugador, Long> {
     
     // Find free agents by position
     List<Jugador> findByEquipoIsNullAndPosicion(Posicion posicion);
+
+    List<Jugador> findByTeam_TeamId(String teamId);
+    java.util.Optional<Jugador> findByJugadorId(String jugadorId);
+
+    // Stats
+    List<Jugador> findTop20ByOrderByGoalsScoredDesc();
+    List<Jugador> findTop20ByOrderByAssistsDesc();
+    List<Jugador> findTop20ByOrderByCalidadDesc();
 }

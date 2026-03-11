@@ -29,5 +29,5 @@ public class Liga {
 
     @OneToMany(mappedBy = "liga", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Partido> partidos = new ArrayList<>();
+    private List<Match> matches = new ArrayList<>();
 }

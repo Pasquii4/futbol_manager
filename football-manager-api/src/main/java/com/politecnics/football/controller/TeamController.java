@@ -2,9 +2,9 @@ package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.PlayerDTO;
 import com.politecnics.football.dto.TeamDTO;
-import com.politecnics.football.entity.Player;
-import com.politecnics.football.entity.Team;
-import com.politecnics.football.repository.TeamRepository;
+import com.politecnics.football.entity.Jugador;
+import com.politecnics.football.entity.Equipo;
+import com.politecnics.football.repository.EquipoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,67 +18,67 @@ import java.util.stream.Collectors;
 public class TeamController {
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     @GetMapping
     public ResponseEntity<List<TeamDTO>> getAllTeams() {
-        List<Team> teams = teamRepository.findAll();
+        List<Equipo> teams = equipoRepository.findAll();
         List<TeamDTO> dtos = teams.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{teamId}")
     public ResponseEntity<TeamDTO> getTeam(@PathVariable String teamId) {
-        return teamRepository.findByTeamId(teamId)
+        return equipoRepository.findByTeamId(teamId)
                 .map(this::convertToDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    private TeamDTO convertToDTO(Team team) {
-        List<PlayerDTO> playerDTOs = team.getPlayers() != null ? 
-                team.getPlayers().stream().map(this::convertPlayerToDTO).collect(Collectors.toList()) :
+    private TeamDTO convertToDTO(Equipo team) {
+        List<PlayerDTO> playerDTOs = team.getJugadores() != null ? 
+                team.getJugadores().stream().map(this::convertPlayerToDTO).collect(Collectors.toList()) :
                 List.of();
                 
         return TeamDTO.builder()
                 .id(team.getId())
                 .teamId(team.getTeamId())
-                .name(team.getName())
+                .name(team.getNombre())
                 .stadium(team.getStadium())
                 .budget(team.getBudget())
-                .overallRating(team.getOverallRating())
+                .overallRating(team.getCalidadRating())
                 .formation(team.getFormation())
                 .mentality(team.getMentality())
-                .players(playerDTOs)
+                .jugadores(playerDTOs)
                 .build();
     }
     
-    private PlayerDTO convertPlayerToDTO(Player player) {
+    private PlayerDTO convertPlayerToDTO(Jugador jugador) {
         return PlayerDTO.builder()
-                .id(player.getId())
-                .playerId(player.getPlayerId())
-                .name(player.getName())
-                .position(player.getPosition())
-                .age(player.getAge())
-                .overall(player.getOverall())
-                .potential(player.getPotential())
-                .goalsScored(player.getGoalsScored())
-                .assists(player.getAssists())
-                .yellowCards(player.getYellowCards())
-                .redCards(player.getRedCards())
-                .matchesPlayed(player.getMatchesPlayed())
-                .matchesPlayed(player.getMatchesPlayed())
-                .marketValue(player.getMarketValue())
+                .id(jugador.getId())
+                .playerId(jugador.getJugadorId())
+                .name(jugador.getNombre())
+                .position(jugador.getPosicion() != null ? jugador.getPosicion().name() : null)
+                .age((java.time.Period.between(jugador.getFechaNacimiento(), java.time.LocalDate.now()).getYears()))
+                .overall(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .potential(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .goalsScored(jugador.getGoalsScored())
+                .assists(jugador.getAssists())
+                .yellowCards(jugador.getYellowCards())
+                .redCards(jugador.getRedCards())
+                .matchesPlayed(jugador.getMatchesPlayed())
+                .matchesPlayed(jugador.getMatchesPlayed())
+                .marketValue(jugador.getMarketValue())
                 .build();
     }
 
     @PutMapping("/{teamId}/tactics")
     public ResponseEntity<TeamDTO> updateTactics(@PathVariable String teamId, @RequestParam String formation, @RequestParam String mentality) {
-        return teamRepository.findByTeamId(teamId)
+        return equipoRepository.findByTeamId(teamId)
                 .map(team -> {
-                    team.setFormation(formation);
-                    team.setMentality(mentality);
-                    return teamRepository.save(team);
+                    // team.setFormation(formation); // Requires mapping to Tactica entity
+                    // team.setMentality(mentality); // Requires mapping to Tactica entity
+                    return equipoRepository.save(team);
                 })
                 .map(this::convertToDTO)
                 .map(ResponseEntity::ok)

@@ -2,9 +2,9 @@ package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.StandingsDTO;
 import com.politecnics.football.entity.Match;
-import com.politecnics.football.entity.Team;
+import com.politecnics.football.entity.Equipo;
 import com.politecnics.football.repository.MatchRepository;
-import com.politecnics.football.repository.TeamRepository;
+import com.politecnics.football.repository.EquipoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,20 +24,20 @@ public class StandingsController {
     private MatchRepository matchRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     @GetMapping
     public ResponseEntity<List<StandingsDTO>> getStandings() {
-        List<Team> teams = teamRepository.findAll();
+        List<Equipo> teams = equipoRepository.findAll();
         List<Match> matches = matchRepository.findByPlayed(true);
 
         Map<Long, StandingsDTO> standingsMap = new HashMap<>();
 
         // Initialize standings for all teams
-        for (Team team : teams) {
+        for (Equipo team : teams) {
             standingsMap.put(team.getId(), StandingsDTO.builder()
                     .teamId(team.getId())
-                    .teamName(team.getName())
+                    .teamName(team.getNombre())
                     .played(0)
                     .won(0)
                     .drawn(0)

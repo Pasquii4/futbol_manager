@@ -1,62 +1,62 @@
 package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.PlayerDTO;
-import com.politecnics.football.entity.Player;
-import com.politecnics.football.repository.PlayerRepository;
+import com.politecnics.football.entity.Jugador;
+import com.politecnics.football.repository.JugadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/api/jugadores")
 @CrossOrigin(origins = "*")
 public class PlayerController {
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private JugadorRepository jugadorRepository;
 
     @Autowired
-    private com.politecnics.football.repository.TeamRepository teamRepository; // Should already be there or not needed if player has team loaded
+    private com.politecnics.football.repository.EquipoRepository equipoRepository; // Should already be there or not needed if jugador has team loaded
 
     @GetMapping
-    public ResponseEntity<java.util.List<PlayerDTO>> getPlayers(@RequestParam(required = false) String teamId) {
-        java.util.List<Player> players;
+    public ResponseEntity<java.util.List<PlayerDTO>> getJugadores(@RequestParam(required = false) String teamId) {
+        java.util.List<Jugador> jugadores;
         if (teamId != null) {
-            players = playerRepository.findByTeam_TeamId(teamId);
+            jugadores = jugadorRepository.findByTeam_TeamId(teamId);
         } else {
-            players = playerRepository.findAll();
+            jugadores = jugadorRepository.findAll();
         }
         
-        java.util.List<PlayerDTO> dtos = players.stream()
+        java.util.List<PlayerDTO> dtos = jugadores.stream()
                 .map(this::convertToDTO)
                 .collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{playerId}")
-    public ResponseEntity<PlayerDTO> getPlayer(@PathVariable Long playerId) {
-        return playerRepository.findById(playerId)
+    public ResponseEntity<PlayerDTO> getJugador(@PathVariable Long playerId) {
+        return jugadorRepository.findById(playerId)
                 .map(this::convertToDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    private PlayerDTO convertToDTO(Player player) {
+    private PlayerDTO convertToDTO(Jugador jugador) {
         return PlayerDTO.builder()
-                .id(player.getId())
-                .playerId(player.getPlayerId())
-                .name(player.getName())
-                .position(player.getPosition())
-                .age(player.getAge())
-                .overall(player.getOverall())
-                .potential(player.getPotential())
-                .goalsScored(player.getGoalsScored())
-                .assists(player.getAssists())
-                .yellowCards(player.getYellowCards())
-                .redCards(player.getRedCards())
-                .matchesPlayed(player.getMatchesPlayed())
-                .teamId(player.getTeam() != null ? player.getTeam().getTeamId() : null)
-                .teamName(player.getTeam() != null ? player.getTeam().getName() : null)
+                .id(jugador.getId())
+                .playerId(jugador.getJugadorId())
+                .name(jugador.getNombre())
+                .position(jugador.getPosicion() != null ? jugador.getPosicion().name() : null)
+                .age((java.time.Period.between(jugador.getFechaNacimiento(), java.time.LocalDate.now()).getYears()))
+                .overall(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .potential(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .goalsScored(jugador.getGoalsScored())
+                .assists(jugador.getAssists())
+                .yellowCards(jugador.getYellowCards())
+                .redCards(jugador.getRedCards())
+                .matchesPlayed(jugador.getMatchesPlayed())
+                .teamId(jugador.getTeam() != null ? jugador.getTeam().getTeamId() : null)
+                .teamName(jugador.getTeam() != null ? jugador.getTeam().getNombre() : null)
                 .build();
     }
 }

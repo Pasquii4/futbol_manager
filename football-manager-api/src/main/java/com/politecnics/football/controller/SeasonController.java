@@ -31,10 +31,10 @@ public class SeasonController {
     private MatchRepository matchRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private JugadorRepository jugadorRepository;
 
     @Autowired
     private LeagueRepository leagueRepository;
@@ -82,12 +82,12 @@ public class SeasonController {
         String champion = standings.get(0).getTeamName();
 
         // 3. Find top scorer
-        List<Player> players = playerRepository.findTop20ByOrderByGoalsScoredDesc();
+        List<Jugador> jugadores = jugadorRepository.findTop20ByOrderByGoalsScoredDesc();
         String topScorer = "N/A";
         int topGoals = 0;
-        if (!players.isEmpty()) {
-            topScorer = players.get(0).getName();
-            topGoals = players.get(0).getGoalsScored() != null ? players.get(0).getGoalsScored() : 0;
+        if (!jugadores.isEmpty()) {
+            topScorer = jugadores.get(0).getNombre();
+            topGoals = jugadores.get(0).getGoalsScored() != null ? jugadores.get(0).getGoalsScored() : 0;
         }
 
         // 4. Get season year
@@ -127,15 +127,15 @@ public class SeasonController {
     }
 
     private List<StandingsDTO> calculateStandings() {
-        List<Team> teams = teamRepository.findAll();
+        List<Equipo> teams = equipoRepository.findAll();
         List<Match> matches = matchRepository.findByPlayed(true);
 
         Map<Long, StandingsDTO> standingsMap = new HashMap<>();
 
-        for (Team team : teams) {
+        for (Equipo team : teams) {
             standingsMap.put(team.getId(), StandingsDTO.builder()
                     .teamId(team.getId())
-                    .teamName(team.getName())
+                    .teamName(team.getNombre())
                     .played(0).won(0).drawn(0).lost(0)
                     .goalsFor(0).goalsAgainst(0).goalDifference(0).points(0)
                     .build());

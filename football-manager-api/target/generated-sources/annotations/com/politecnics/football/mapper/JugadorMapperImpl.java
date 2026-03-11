@@ -1,80 +1,56 @@
 package com.politecnics.football.mapper;
 
 import com.politecnics.football.dto.EstadisticasJugadorDTO;
-import com.politecnics.football.dto.JugadorDTO;
 import com.politecnics.football.dto.LesionDTO;
+import com.politecnics.football.dto.PlayerDTO;
 import com.politecnics.football.entity.EstadisticasJugador;
 import com.politecnics.football.entity.Jugador;
 import com.politecnics.football.entity.Lesion;
-import com.politecnics.football.entity.Posicion;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-11T10:50:48+0100",
+    date = "2026-03-11T12:56:53+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.10 (Eclipse Adoptium)"
 )
 @Component
 public class JugadorMapperImpl implements JugadorMapper {
 
     @Override
-    public JugadorDTO toDTO(Jugador jugador) {
+    public PlayerDTO toDTO(Jugador jugador) {
         if ( jugador == null ) {
             return null;
         }
 
-        Long id = null;
-        String nombre = null;
-        String apellido = null;
-        Integer dorsal = null;
-        Posicion posicion = null;
-        Double calidad = null;
-        Double fatiga = null;
-        Double forma = null;
-        Double sueldo = null;
-        Double motivacion = null;
-        LesionDTO lesion = null;
-        EstadisticasJugadorDTO estadisticas = null;
+        PlayerDTO.PlayerDTOBuilder playerDTO = PlayerDTO.builder();
 
-        id = jugador.getId();
-        nombre = jugador.getNombre();
-        apellido = jugador.getApellido();
-        dorsal = jugador.getDorsal();
-        posicion = jugador.getPosicion();
-        calidad = jugador.getCalidad();
-        fatiga = jugador.getFatiga();
-        forma = jugador.getForma();
-        sueldo = jugador.getSueldo();
-        motivacion = jugador.getMotivacion();
-        lesion = toLesionDTO( jugador.getLesion() );
-        estadisticas = toEstadisticasDTO( jugador.getEstadisticas() );
+        playerDTO.id( jugador.getId() );
+        playerDTO.goalsScored( jugador.getGoalsScored() );
+        playerDTO.assists( jugador.getAssists() );
+        playerDTO.yellowCards( jugador.getYellowCards() );
+        playerDTO.redCards( jugador.getRedCards() );
+        playerDTO.marketValue( jugador.getMarketValue() );
+        playerDTO.matchesPlayed( jugador.getMatchesPlayed() );
 
-        JugadorDTO jugadorDTO = new JugadorDTO( id, nombre, apellido, dorsal, posicion, calidad, fatiga, forma, sueldo, motivacion, lesion, estadisticas );
-
-        return jugadorDTO;
+        return playerDTO.build();
     }
 
     @Override
-    public Jugador toEntity(JugadorDTO dto) {
+    public Jugador toEntity(PlayerDTO dto) {
         if ( dto == null ) {
             return null;
         }
 
         Jugador.JugadorBuilder jugador = Jugador.builder();
 
-        jugador.id( dto.id() );
-        jugador.nombre( dto.nombre() );
-        jugador.apellido( dto.apellido() );
-        jugador.dorsal( dto.dorsal() );
-        jugador.posicion( dto.posicion() );
-        jugador.calidad( dto.calidad() );
-        jugador.fatiga( dto.fatiga() );
-        jugador.sueldo( dto.sueldo() );
-        jugador.motivacion( dto.motivacion() );
-        jugador.forma( dto.forma() );
-        jugador.estadisticas( toEstadisticasEntity( dto.estadisticas() ) );
-        jugador.lesion( toLesionEntity( dto.lesion() ) );
+        jugador.id( dto.getId() );
+        jugador.marketValue( dto.getMarketValue() );
+        jugador.goalsScored( dto.getGoalsScored() );
+        jugador.assists( dto.getAssists() );
+        jugador.yellowCards( dto.getYellowCards() );
+        jugador.redCards( dto.getRedCards() );
+        jugador.matchesPlayed( dto.getMatchesPlayed() );
 
         return jugador.build();
     }

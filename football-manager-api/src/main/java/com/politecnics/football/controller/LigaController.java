@@ -1,7 +1,7 @@
 package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.LigaDTO;
-import com.politecnics.football.dto.PartidoDTO;
+import com.politecnics.football.dto.MatchDTO;
 import com.politecnics.football.service.LigaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,13 +32,13 @@ public class LigaController {
 
     @PostMapping("/{id}/simular")
     @Operation(summary = "Simular la jornada actual")
-    public ResponseEntity<List<PartidoDTO>> simularJornada(@PathVariable Long id) {
+    public ResponseEntity<List<MatchDTO>> simularJornada(@PathVariable Long id) {
         return ResponseEntity.ok(ligaService.simularJornada(id));
     }
     
     @GetMapping("/{id}/jornadas/{jornada}")
     @Operation(summary = "Obtener resultados de una jornada")
-    public ResponseEntity<List<PartidoDTO>> getResultadosJornada(@PathVariable Long id, @PathVariable Integer jornada) {
+    public ResponseEntity<List<MatchDTO>> getResultadosJornada(@PathVariable Long id, @PathVariable Integer jornada) {
         return ResponseEntity.ok(ligaService.getResultadosJornada(id, jornada));
     }
 }

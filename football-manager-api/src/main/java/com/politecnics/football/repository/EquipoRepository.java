@@ -12,4 +12,5 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
     Optional<Equipo> findByNombre(String nombre);
     List<Equipo> findAllByOrderByNombreAsc();
     List<Equipo> findByLigaId(Long ligaId);
+    Optional<Equipo> findByTeamId(String teamId);
 }

@@ -23,7 +23,7 @@ public class DataSeeder {
     private final LigaRepository ligaRepository;
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
-    private final com.politecnics.football.repository.PartidoRepository partidoRepository;
+    private final com.politecnics.football.repository.MatchRepository matchRepository;
 
     //@Bean
     public CommandLineRunner initData() {
@@ -103,13 +103,13 @@ public class DataSeeder {
             
             // Fixed team
             int fixedIndex = 0;
-            Equipo fixedTeam = equipos.get(0);
+            Equipo fixedEquipo = equipos.get(0);
             Equipo opponent = rotation.get(rotation.size() - 1); // Last in rotation
             
             if (jornada % 2 != 0) {
-                 pairs.add(new Pair(fixedTeam, opponent));
+                 pairs.add(new Pair(fixedEquipo, opponent));
             } else {
-                 pairs.add(new Pair(opponent, fixedTeam));
+                 pairs.add(new Pair(opponent, fixedEquipo));
             }
             
             // Rest of pairs
@@ -130,17 +130,17 @@ public class DataSeeder {
                 Equipo local = isSecondRound ? p.away : p.home;
                 Equipo visit = isSecondRound ? p.home : p.away;
                 
-                Partido partido = Partido.builder()
-                        .jornada(jornada)
-                        .jugado(false)
+                Match match = Match.builder()
+                        .matchday(jornada)
+                        .played(false)
                         .liga(liga)
-                        .equipoLocal(local)
-                        .equipoVisitante(visit)
-                        .golesLocal(0)
-                        .golesVisitante(0)
+                        .homeTeam(local)
+                        .awayTeam(visit)
+                        .homeGoals(0)
+                        .awayGoals(0)
                         .build();
                         
-                partidoRepository.save(partido);
+                matchRepository.save(match);
             }
             
             // Rotate

@@ -22,7 +22,7 @@ public class MatchEvent {
 
     @ManyToOne
     @JoinColumn(name = "player_id")
-    private Player player;
+    private Jugador jugador;
 
     @Enumerated(EnumType.STRING)
     private EventType type; // GOAL, ASSIST, YELLOW_CARD, RED_CARD

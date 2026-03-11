@@ -2,7 +2,7 @@ package com.politecnics.football.mapper;
 
 import com.politecnics.football.dto.EntrenadorDTO;
 import com.politecnics.football.dto.EquipoDTO;
-import com.politecnics.football.dto.JugadorDTO;
+import com.politecnics.football.dto.PlayerDTO;
 import com.politecnics.football.dto.PresupuestoDTO;
 import com.politecnics.football.dto.TacticaDTO;
 import com.politecnics.football.entity.Equipo;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-11T10:50:48+0100",
+    date = "2026-03-11T12:56:53+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.10 (Eclipse Adoptium)"
 )
 @Component
@@ -50,7 +50,7 @@ public class EquipoMapperImpl implements EquipoMapper {
         Integer derrotas = null;
         EntrenadorDTO entrenador = null;
         TacticaDTO tactica = null;
-        List<JugadorDTO> jugadores = null;
+        List<PlayerDTO> jugadores = null;
 
         id = equipo.getId();
         nombre = equipo.getNombre();
@@ -67,7 +67,7 @@ public class EquipoMapperImpl implements EquipoMapper {
         derrotas = equipo.getDerrotas();
         entrenador = entrenadorMapper.toDTO( equipo.getEntrenador() );
         tactica = tacticaMapper.toDTO( equipo.getTactica() );
-        jugadores = jugadorListToJugadorDTOList( equipo.getJugadores() );
+        jugadores = jugadorListToPlayerDTOList( equipo.getJugadores() );
 
         EquipoDTO equipoDTO = new EquipoDTO( id, nombre, anyFundacion, ciudad, estadio, presidente, puntos, golesFavor, golesContra, partidosJugados, victorias, empates, derrotas, entrenador, tactica, jugadores );
 
@@ -95,7 +95,7 @@ public class EquipoMapperImpl implements EquipoMapper {
         equipo.victorias( dto.victorias() );
         equipo.empates( dto.empates() );
         equipo.derrotas( dto.derrotas() );
-        equipo.jugadores( jugadorDTOListToJugadorList( dto.jugadores() ) );
+        equipo.jugadores( playerDTOListToJugadorList( dto.jugadores() ) );
         equipo.tactica( tacticaMapper.toEntity( dto.tactica() ) );
         equipo.entrenador( entrenadorMapper.toEntity( dto.entrenador() ) );
 
@@ -139,12 +139,12 @@ public class EquipoMapperImpl implements EquipoMapper {
         return presupuesto;
     }
 
-    protected List<JugadorDTO> jugadorListToJugadorDTOList(List<Jugador> list) {
+    protected List<PlayerDTO> jugadorListToPlayerDTOList(List<Jugador> list) {
         if ( list == null ) {
             return null;
         }
 
-        List<JugadorDTO> list1 = new ArrayList<JugadorDTO>( list.size() );
+        List<PlayerDTO> list1 = new ArrayList<PlayerDTO>( list.size() );
         for ( Jugador jugador : list ) {
             list1.add( jugadorMapper.toDTO( jugador ) );
         }
@@ -152,14 +152,14 @@ public class EquipoMapperImpl implements EquipoMapper {
         return list1;
     }
 
-    protected List<Jugador> jugadorDTOListToJugadorList(List<JugadorDTO> list) {
+    protected List<Jugador> playerDTOListToJugadorList(List<PlayerDTO> list) {
         if ( list == null ) {
             return null;
         }
 
         List<Jugador> list1 = new ArrayList<Jugador>( list.size() );
-        for ( JugadorDTO jugadorDTO : list ) {
-            list1.add( jugadorMapper.toEntity( jugadorDTO ) );
+        for ( PlayerDTO playerDTO : list ) {
+            list1.add( jugadorMapper.toEntity( playerDTO ) );
         }
 
         return list1;

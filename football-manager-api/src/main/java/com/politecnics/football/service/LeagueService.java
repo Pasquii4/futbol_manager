@@ -1,9 +1,9 @@
 package com.politecnics.football.service;
 
 import com.politecnics.football.entity.Match;
-import com.politecnics.football.entity.Player;
+import com.politecnics.football.entity.Jugador;
 import com.politecnics.football.repository.MatchRepository;
-import com.politecnics.football.repository.PlayerRepository;
+import com.politecnics.football.repository.JugadorRepository;
 import com.politecnics.football.service.simulation.MatchEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class LeagueService {
     private MatchRepository matchRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private JugadorRepository jugadorRepository;
 
     @Autowired
     private MatchEngine matchEngine;
@@ -40,7 +40,7 @@ public class LeagueService {
                 matchEngine.simulateMatch(match);
                 matchRepository.save(match);
                 
-                // 4. Update Player Stats immediately (or could be done in batch)
+                // 4. Update Jugador Stats immediately (or could be done in batch)
                 updatePlayerStats(match);
             }
         }
@@ -56,50 +56,50 @@ public class LeagueService {
 
     private void updatePlayerStats(Match match) {
         match.getEvents().forEach(event -> {
-            Player player = event.getPlayer();
-            if (player != null) {
+            Jugador jugador = event.getJugador();
+            if (jugador != null) {
                 switch (event.getType()) {
                     case GOAL:
-                        player.setGoalsScored(player.getGoalsScored() + 1);
+                        jugador.setGoalsScored(jugador.getGoalsScored() + 1);
                         break;
                     case ASSIST:
-                        player.setAssists(player.getAssists() + 1);
+                        jugador.setAssists(jugador.getAssists() + 1);
                         break;
                     case YELLOW_CARD:
-                        player.setYellowCards(player.getYellowCards() + 1);
+                        jugador.setYellowCards(jugador.getYellowCards() + 1);
                         break;
                     case RED_CARD:
-                        player.setRedCards(player.getRedCards() + 1);
+                        jugador.setRedCards(jugador.getRedCards() + 1);
                         break;
                 }
-                playerRepository.save(player);
+                jugadorRepository.save(jugador);
             }
         });
         
         // Update general stats like matches played
-        updateMatchPlayed(match.getHomeTeam().getPlayers());
-        updateMatchPlayed(match.getAwayTeam().getPlayers());
+        updateMatchPlayed(match.getHomeTeam().getJugadores());
+        updateMatchPlayed(match.getAwayTeam().getJugadores());
     }
 
-    private void updateMatchPlayed(List<Player> players) {
+    private void updateMatchPlayed(List<Jugador> jugadores) {
         // Simple logic: everyone available played. 
         // Improvement: MatchEngine should determine Lineups first.
-        // For now, assume all squad players get +1 match (Simplified) -> actually this is bad.
-        // Better: Only players involved in events? No. 
-        // For Phase 2 MVP: Randomly select 11 players to get +1 match played?
+        // For now, assume all squad jugadores get +1 match (Simplified) -> actually this is bad.
+        // Better: Only jugadores involved in events? No. 
+        // For Phase 2 MVP: Randomly select 11 jugadores to get +1 match played?
         // Let's leave this simple: If we don't have lineups, maybe just increment matchesPlayed for the whole team? 
         // No, that's unrealistic. 
-        // Use a random subset of 15 players per team.
-        if (players == null || players.isEmpty()) return;
+        // Use a random subset of 15 jugadores per team.
+        if (jugadores == null || jugadores.isEmpty()) return;
         
         // Shuffle and pick 14-16
         // For now, let's just say "Top 11 by Overall" played.
-        players.stream()
-                .sorted((p1, p2) -> p2.getOverall().compareTo(p1.getOverall()))
+        jugadores.stream()
+                .sorted((p1, p2) -> p2.getCalidad().compareTo(p1.getCalidad()))
                 .limit(14)
                 .forEach(p -> {
                     p.setMatchesPlayed(p.getMatchesPlayed() + 1);
-                    playerRepository.save(p);
+                    jugadorRepository.save(p);
                 });
     }
 }

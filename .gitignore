@@ -1,2 +1,9 @@
 .venv
 .tools
+
+*.log
+backend_startup.log
+backend.log
+jugadors.json
+jugadors_con_fotos.json
+login.json

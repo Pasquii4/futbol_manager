@@ -1,10 +1,10 @@
 package com.politecnics.football.controller;
 
 import com.politecnics.football.dto.PlayerDTO;
-import com.politecnics.football.entity.Player;
-import com.politecnics.football.entity.Team;
-import com.politecnics.football.repository.PlayerRepository;
-import com.politecnics.football.repository.TeamRepository;
+import com.politecnics.football.entity.Jugador;
+import com.politecnics.football.entity.Equipo;
+import com.politecnics.football.repository.JugadorRepository;
+import com.politecnics.football.repository.EquipoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controller for player transfer operations: buy, sell, and market listing.
+ * Controller for jugador transfer operations: buy, sell, and market listing.
  */
 @Slf4j
 @RestController
@@ -25,18 +25,18 @@ import java.util.stream.Collectors;
 public class TransferController {
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private JugadorRepository jugadorRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     /**
-     * GET /api/transfers/market - Lists players available for transfer.
-     * Returns all players not belonging to the specified team (or all if no teamId).
+     * GET /api/transfers/market - Lists jugadores available for transfer.
+     * Returns all jugadores not belonging to the specified team (or all if no teamId).
      */
     @GetMapping("/market")
     public ResponseEntity<List<PlayerDTO>> getMarketPlayers(@RequestParam(required = false) Long excludeTeamId) {
-        List<Player> allPlayers = playerRepository.findAll();
+        List<Jugador> allPlayers = jugadorRepository.findAll();
 
         List<PlayerDTO> marketPlayers = allPlayers.stream()
                 .filter(p -> excludeTeamId == null || p.getTeam() == null || !p.getTeam().getId().equals(excludeTeamId))
@@ -47,89 +47,93 @@ public class TransferController {
     }
 
     /**
-     * POST /api/transfers/buy - Buy a player for a team.
-     * Validates budget and transfers the player.
+     * POST /api/transfers/buy - Buy a jugador for a team.
+     * Validates budget and transfers the jugador.
      */
     @PostMapping("/buy")
     @Transactional
     public ResponseEntity<String> buyPlayer(@RequestParam Long playerId, @RequestParam Long teamId) {
-        Player player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + playerId));
+        Jugador jugador = jugadorRepository.findById(playerId)
+                .orElseThrow(() -> new EntityNotFoundException("Jugador not found with ID: " + playerId));
 
-        Team buyingTeam = teamRepository.findById(teamId)
+        Equipo buyingEquipo = equipoRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Buying team not found with ID: " + teamId));
 
-        Team sellingTeam = player.getTeam();
+        Equipo sellingEquipo = jugador.getTeam();
 
-        if (sellingTeam != null && buyingTeam.getId().equals(sellingTeam.getId())) {
-            throw new IllegalArgumentException("Player is already in this team");
+        if (sellingEquipo != null && buyingEquipo.getId().equals(sellingEquipo.getId())) {
+            throw new IllegalArgumentException("Jugador is already in this team");
         }
 
-        long price = player.getMarketValue() != null ? player.getMarketValue() : 0;
+        long price = jugador.getMarketValue() != null ? jugador.getMarketValue() : 0;
 
-        if (buyingTeam.getBudget() < price) {
-            throw new IllegalArgumentException("Not enough budget. Required: " + price + ", Available: " + buyingTeam.getBudget());
+        if (buyingEquipo.getPresupuesto() != null && buyingEquipo.getBudget() < price) {
+            throw new IllegalArgumentException("Not enough budget. Required: " + price + ", Available: " + buyingEquipo.getBudget());
         }
 
         // Execute transfer
-        buyingTeam.setBudget(buyingTeam.getBudget() - price);
-        if (sellingTeam != null) {
-            sellingTeam.setBudget(sellingTeam.getBudget() + price);
-            teamRepository.save(sellingTeam);
+        if (buyingEquipo.getPresupuesto() != null) {
+            buyingEquipo.setBudget(buyingEquipo.getBudget() - price);
+        }
+        if (sellingEquipo != null && sellingEquipo.getPresupuesto() != null) {
+            sellingEquipo.setBudget(sellingEquipo.getBudget() + price);
+            equipoRepository.save(sellingEquipo);
         }
 
-        player.setTeam(buyingTeam);
+        jugador.setTeam(buyingEquipo);
 
-        teamRepository.save(buyingTeam);
-        playerRepository.save(player);
+        equipoRepository.save(buyingEquipo);
+        jugadorRepository.save(jugador);
 
-        log.info("Transfer: {} -> {} for €{}", player.getName(), buyingTeam.getName(), price);
-        return ResponseEntity.ok("Transfer successful: " + player.getName() + " to " + buyingTeam.getName());
+        log.info("Transfer: {} -> {} for €{}", jugador.getNombre(), buyingEquipo.getNombre(), price);
+        return ResponseEntity.ok("Transfer successful: " + jugador.getNombre() + " to " + buyingEquipo.getNombre());
     }
 
     /**
-     * POST /api/transfers/sell - Sell a player (makes them a free agent).
+     * POST /api/transfers/sell - Sell a jugador (makes them a free agent).
      */
     @PostMapping("/sell")
     @Transactional
     public ResponseEntity<String> sellPlayer(@RequestParam Long playerId) {
-        Player player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + playerId));
+        Jugador jugador = jugadorRepository.findById(playerId)
+                .orElseThrow(() -> new EntityNotFoundException("Jugador not found with ID: " + playerId));
 
-        Team sellingTeam = player.getTeam();
-        if (sellingTeam == null) {
-            throw new IllegalArgumentException("Player is already a free agent");
+        Equipo sellingEquipo = jugador.getTeam();
+        if (sellingEquipo == null) {
+            throw new IllegalArgumentException("Jugador is already a free agent");
         }
 
-        long price = player.getMarketValue() != null ? player.getMarketValue() : 0;
-        sellingTeam.setBudget(sellingTeam.getBudget() + price);
+        long price = jugador.getMarketValue() != null ? jugador.getMarketValue() : 0;
+        
+        if (sellingEquipo.getPresupuesto() != null) {
+             sellingEquipo.setBudget(sellingEquipo.getBudget() + price);
+             equipoRepository.save(sellingEquipo);
+        }
 
-        player.setTeam(null);
+        jugador.setTeam(null);
+        jugadorRepository.save(jugador);
 
-        teamRepository.save(sellingTeam);
-        playerRepository.save(player);
-
-        log.info("Player sold: {} from {} for €{}", player.getName(), sellingTeam.getName(), price);
-        return ResponseEntity.ok("Player sold: " + player.getName() + " for €" + price);
+        log.info("Jugador sold: {} from {} for €{}", jugador.getNombre(), sellingEquipo.getNombre(), price);
+        return ResponseEntity.ok("Jugador sold: " + jugador.getNombre() + " for €" + price);
     }
 
-    private PlayerDTO convertToDTO(Player player) {
+    private PlayerDTO convertToDTO(Jugador jugador) {
         return PlayerDTO.builder()
-                .id(player.getId())
-                .playerId(player.getPlayerId())
-                .name(player.getName())
-                .position(player.getPosition())
-                .age(player.getAge())
-                .overall(player.getOverall())
-                .potential(player.getPotential())
-                .goalsScored(player.getGoalsScored())
-                .assists(player.getAssists())
-                .yellowCards(player.getYellowCards())
-                .redCards(player.getRedCards())
-                .matchesPlayed(player.getMatchesPlayed())
-                .marketValue(player.getMarketValue())
-                .teamId(player.getTeam() != null ? player.getTeam().getTeamId() : null)
-                .teamName(player.getTeam() != null ? player.getTeam().getName() : "Free Agent")
+                .id(jugador.getId())
+                .playerId(jugador.getJugadorId())
+                .name(jugador.getNombre())
+                .position(jugador.getPosicion() != null ? jugador.getPosicion().name() : null)
+                .age((java.time.Period.between(jugador.getFechaNacimiento(), java.time.LocalDate.now()).getYears()))
+                .overall(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .potential(jugador.getCalidad() != null ? jugador.getCalidad().intValue() : 0)
+                .goalsScored(jugador.getGoalsScored())
+                .assists(jugador.getAssists())
+                .yellowCards(jugador.getYellowCards())
+                .redCards(jugador.getRedCards())
+                .matchesPlayed(jugador.getMatchesPlayed())
+                .marketValue(jugador.getMarketValue())
+                .teamId(jugador.getTeam() != null ? jugador.getTeam().getTeamId() : null)
+                .teamName(jugador.getTeam() != null ? jugador.getTeam().getNombre() : "Free Agent")
                 .build();
     }
 }

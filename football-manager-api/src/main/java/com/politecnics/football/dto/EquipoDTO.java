@@ -18,5 +18,5 @@ public record EquipoDTO(
     Integer derrotas,
     EntrenadorDTO entrenador,
     TacticaDTO tactica,
-    List<JugadorDTO> jugadores
+    List<PlayerDTO> jugadores
 ) {}

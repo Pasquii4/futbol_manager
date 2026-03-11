@@ -3,13 +3,13 @@ package com.politecnics.football.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.politecnics.football.entity.Match;
-import com.politecnics.football.entity.Player;
-import com.politecnics.football.entity.Team;
-import com.politecnics.football.repository.LeagueRepository;
+import com.politecnics.football.entity.Jugador;
+import com.politecnics.football.entity.Equipo;
+import com.politecnics.football.repository.LigaRepository;
 import com.politecnics.football.repository.MatchEventRepository;
 import com.politecnics.football.repository.MatchRepository;
-import com.politecnics.football.repository.PlayerRepository;
-import com.politecnics.football.repository.TeamRepository;
+import com.politecnics.football.repository.JugadorRepository;
+import com.politecnics.football.repository.EquipoRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -28,20 +28,20 @@ import java.util.Optional;
 
 /**
  * Service responsible for loading and resetting LaLiga data from JSON.
- * Reads team, player, and match data from laliga_db.json and persists to DB.
+ * Reads team, jugador, and match data from laliga_db.json and persists to DB.
  */
 @Slf4j
 @Service
 public class DataLoadService {
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private JugadorRepository jugadorRepository;
 
     @Autowired
-    private LeagueRepository leagueRepository;
+    private LigaRepository ligaRepository;
 
     @Autowired
     private MatchRepository matchRepository;
@@ -83,7 +83,7 @@ public class DataLoadService {
     /**
      * Resets all league data: deletes everything and reloads from JSON.
      * Deletion order respects foreign key constraints:
-     * match_events → matches → players → teams → leagues
+     * match_events → matches → jugadores → teams → leagues
      */
     @Transactional
     public void resetLeagueData() {
@@ -94,7 +94,7 @@ public class DataLoadService {
             entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
 
             log.info("Cleaning all tables...");
-            String[] tables = {"match_events", "matches", "players", "teams", "leagues", "seasons"};
+            String[] tables = {"match_events", "matches", "jugadores", "teams", "leagues", "seasons"};
             for (String table : tables) {
                 try {
                     entityManager.createNativeQuery("TRUNCATE TABLE " + table).executeUpdate();
@@ -125,8 +125,8 @@ public class DataLoadService {
      */
     @Transactional
     public void loadData(boolean force) {
-        if (!force && teamRepository.count() > 0) {
-            log.info("Data already loaded ({} teams found). Skipping.", teamRepository.count());
+        if (!force && equipoRepository.count() > 0) {
+            log.info("Data already loaded ({} teams found). Skipping.", equipoRepository.count());
             return;
         }
 
@@ -147,7 +147,7 @@ public class DataLoadService {
 
                 if (!file.exists()) {
                     log.warn("laliga_db.json not found in classpath or filesystem. Using FixtureGenerator fallback.");
-                    List<Team> allTeams = teamRepository.findAll();
+                    List<Equipo> allTeams = equipoRepository.findAll();
                     if (allTeams.size() >= 2) {
                         fixtureGenerator.generateFixtures(allTeams);
                         log.info("Fallback fixtures generated for {} teams", allTeams.size());
@@ -164,16 +164,16 @@ public class DataLoadService {
             Map<String, Object> data = objectMapper.readValue(inputStream, new TypeReference<>() {});
 
             // 1. Load or create League entity
-            com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+            com.politecnics.football.entity.Liga league = ligaRepository.findAll().stream().findFirst().orElse(null);
             if (league == null) {
-                league = com.politecnics.football.entity.League.builder()
-                        .name((String) data.getOrDefault("leagueName", "LaLiga EA Sports"))
-                        .country((String) data.getOrDefault("country", "Spain"))
-                        .seasonYear(mapToInt(data.getOrDefault("seasonYear", 2025)))
-                        .managedTeamId(null)
+                league = com.politecnics.football.entity.Liga.builder()
+                        .nombre((String) data.getOrDefault("leagueName", "LaLiga EA Sports"))
+                        //.country((String) data.getOrDefault("country", "Spain"))
+                        //.seasonYear(mapToInt(data.getOrDefault("seasonYear", 2025)))
+                        //.managedTeamId(null)
                         .build();
-                leagueRepository.save(league);
-                log.info("League created: {}", league.getName());
+                ligaRepository.save(league);
+                log.info("League created: {}", league.getNombre());
             }
 
             // 2. Load Teams and Players
@@ -184,41 +184,40 @@ public class DataLoadService {
 
             for (Map<String, Object> teamData : teamsData) {
                 String teamId = (String) teamData.get("id");
-                Team team = teamRepository.findByTeamId(teamId).orElse(null);
+                Equipo equipo = equipoRepository.findByTeamId(teamId).orElse(null);
 
-                if (team == null) {
-                    team = Team.builder()
+                if (equipo == null) {
+                    equipo = Equipo.builder()
                             .teamId(teamId)
-                            .name((String) teamData.get("name"))
-                            .stadium((String) teamData.get("stadium"))
-                            .budget(mapToLong(teamData.get("budget")))
-                            .overallRating(mapToInt(teamData.get("overallRating")))
+                            .nombre((String) teamData.get("nombre"))
+                            .estadio((String) teamData.get("stadium"))
+                            .calidadRating(mapToInt(teamData.get("overallRating")))
                             .build();
+                    equipo.setBudget(mapToLong(teamData.get("budget")));
                     teamsLoaded++;
                 } else {
-                    team.setName((String) teamData.get("name"));
-                    team.setBudget(mapToLong(teamData.get("budget")));
+                    equipo.setNombre((String) teamData.get("nombre"));
+                    equipo.setBudget(mapToLong(teamData.get("budget")));
                 }
-                team = teamRepository.save(team);
+                equipo = equipoRepository.save(equipo);
 
                 // Load Players for this team
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> playersData = (List<Map<String, Object>>) teamData.get("players");
+                List<Map<String, Object>> playersData = (List<Map<String, Object>>) teamData.get("jugadores");
                 if (playersData != null) {
                     for (Map<String, Object> playerData : playersData) {
                         String playerId = (String) playerData.get("id");
-                        Player player = playerRepository.findByPlayerId(playerId).orElse(null);
+                        Jugador jugador = jugadorRepository.findByJugadorId(playerId).orElse(null);
 
-                        if (player == null) {
-                            player = Player.builder()
-                                    .playerId(playerId)
-                                    .name((String) playerData.get("name"))
-                                    .position((String) playerData.get("position"))
-                                    .age(mapToInt(playerData.get("age")))
-                                    .overall(mapToInt(playerData.get("overall")))
-                                    .potential(mapToInt(playerData.get("potential")))
+                        if (jugador == null) {
+                            jugador = Jugador.builder()
+                                    .jugadorId(playerId)
+                                    .nombre((String) playerData.get("name"))
+                                    .posicion(com.politecnics.football.entity.Posicion.POR) // Default to compile
+                                    .fechaNacimiento(java.time.LocalDate.now().minusYears(mapToInt(playerData.get("age"))))
+                                    .calidad((double) mapToInt(playerData.get("overall")))
                                     .marketValue(mapToLong(playerData.getOrDefault("marketValue", 0)))
-                                    .team(team)
+                                    .equipo(equipo)
                                     .goalsScored(0)
                                     .assists(0)
                                     .matchesPlayed(0)
@@ -227,9 +226,9 @@ public class DataLoadService {
                                     .build();
                             playersLoaded++;
                         } else {
-                            player.setTeam(team);
+                            jugador.setEquipo(equipo);
                         }
-                        playerRepository.save(player);
+                        jugadorRepository.save(jugador);
                     }
                 }
             }
@@ -247,17 +246,17 @@ public class DataLoadService {
                         String homeId = (String) matchData.get("homeTeamId");
                         String awayId = (String) matchData.get("awayTeamId");
 
-                        Optional<Team> homeTeam = teamRepository.findByTeamId(homeId);
-                        Optional<Team> awayTeam = teamRepository.findByTeamId(awayId);
+                        Optional<Equipo> homeEquipo = equipoRepository.findByTeamId(homeId);
+                        Optional<Equipo> awayEquipo = equipoRepository.findByTeamId(awayId);
 
-                        if (homeTeam.isPresent() && awayTeam.isPresent()) {
+                        if (homeEquipo.isPresent() && awayEquipo.isPresent()) {
                             String dateStr = (String) matchData.get("date");
                             LocalDateTime dateTime = LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_DATE_TIME);
 
                             Match match = Match.builder()
                                     .matchday(mapToInt(matchData.get("matchday")))
-                                    .homeTeam(homeTeam.get())
-                                    .awayTeam(awayTeam.get())
+                                    .homeTeam(homeEquipo.get())
+                                    .awayTeam(awayEquipo.get())
                                     .homeGoals(mapToInt(matchData.get("homeGoals")))
                                     .awayGoals(mapToInt(matchData.get("awayGoals")))
                                     .played((Boolean) matchData.get("played"))
@@ -279,7 +278,7 @@ public class DataLoadService {
             // 4. Generate fixtures if no matches were in JSON
             if (!matchesLoaded && matchRepository.count() == 0) {
                 log.info("No matches in JSON. Generating fixtures...");
-                List<Team> allTeams = teamRepository.findAll();
+                List<Equipo> allTeams = equipoRepository.findAll();
                 fixtureGenerator.generateFixtures(allTeams);
                 log.info("Fixtures generated. Total matches: {}", matchRepository.count());
             }

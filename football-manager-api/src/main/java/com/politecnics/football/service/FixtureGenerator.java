@@ -1,7 +1,7 @@
 package com.politecnics.football.service;
 
 import com.politecnics.football.entity.Match;
-import com.politecnics.football.entity.Team;
+import com.politecnics.football.entity.Equipo;
 import com.politecnics.football.repository.MatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class FixtureGenerator {
     private MatchRepository matchRepository;
 
     @Transactional
-    public void generateFixtures(List<Team> teams) {
+    public void generateFixtures(List<Equipo> teams) {
         if (teams.size() < 2) return;
         
         // Ensure even number of teams
@@ -35,23 +35,23 @@ public class FixtureGenerator {
         List<Match> allMatches = new ArrayList<>();
         LocalDate startDate = LocalDate.of(2025, 8, 15); // Season start
 
-        List<Team> rotatedTeams = new ArrayList<>(teams);
+        List<Equipo> rotatedTeams = new ArrayList<>(teams);
         // Remove first team, it stays fixed
-        Team fixedTeam = rotatedTeams.remove(0);
+        Equipo fixedEquipo = rotatedTeams.remove(0);
 
         for (int round = 0; round < numRounds; round++) {
             int matchday = round + 1;
             LocalDate matchDate = startDate.plusWeeks(round);
 
             // Add fixed team match
-            Team home, away;
+            Equipo home, away;
             // Alternating home/away for the fixed team
             if (round % 2 == 0) {
-                home = fixedTeam;
+                home = fixedEquipo;
                 away = rotatedTeams.get(rotatedTeams.size() - 1);
             } else {
                 home = rotatedTeams.get(rotatedTeams.size() - 1);
-                away = fixedTeam;
+                away = fixedEquipo;
             }
             
             allMatches.add(Match.builder()
@@ -69,8 +69,8 @@ public class FixtureGenerator {
                 int team1Idx = i;
                 int team2Idx = rotatedTeams.size() - 2 - i;
 
-                Team t1 = rotatedTeams.get(team1Idx);
-                Team t2 = rotatedTeams.get(team2Idx);
+                Equipo t1 = rotatedTeams.get(team1Idx);
+                Equipo t2 = rotatedTeams.get(team2Idx);
 
                 if (round % 2 == 0) {
                     home = t1;
@@ -92,7 +92,7 @@ public class FixtureGenerator {
             }
 
             // Rotate teams
-            Team last = rotatedTeams.remove(rotatedTeams.size() - 1);
+            Equipo last = rotatedTeams.remove(rotatedTeams.size() - 1);
             rotatedTeams.add(0, last);
         }
         

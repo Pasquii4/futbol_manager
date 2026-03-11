@@ -21,13 +21,17 @@ public class Match {
 
     private Integer matchday; // Jornada 1, 2, 3...
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "liga_id")
+    private Liga liga;
+    
     @ManyToOne
     @JoinColumn(name = "home_team_id")
-    private Team homeTeam;
+    private Equipo homeTeam;
     
     @ManyToOne
     @JoinColumn(name = "away_team_id")
-    private Team awayTeam;
+    private Equipo awayTeam;
 
     private Integer homeGoals;
     private Integer awayGoals;
