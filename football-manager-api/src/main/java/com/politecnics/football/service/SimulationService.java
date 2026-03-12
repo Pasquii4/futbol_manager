@@ -33,7 +33,7 @@ public class SimulationService {
         
         for (com.politecnics.football.entity.Match match : matches) {
             if (!match.isPlayed()) {
-                matchEngine.simulateMatch(match);
+                matchEngine.simulateMatch(match, null);
                 matchRepository.save(match);
                 statsUpdateService.updateStatsCoordinates(match);
             }

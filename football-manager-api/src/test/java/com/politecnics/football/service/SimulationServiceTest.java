@@ -2,7 +2,7 @@ package com.politecnics.football.service;
 
 import com.politecnics.football.entity.Match;
 import com.politecnics.football.repository.MatchRepository;
-import com.politecnics.football.repository.TeamRepository;
+import com.politecnics.football.repository.EquipoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,12 +28,12 @@ class SimulationServiceTest {
     private MatchRepository matchRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
+    private EquipoRepository equipoRepository;
 
     @Test
     void testSimulationCycle() {
         // 1. Data Loading triggers automatically via @PostConstruct, but in test env let's verify
-        assertTrue(teamRepository.count() > 0, "Teams should be loaded");
+        assertTrue(equipoRepository.count() > 0, "Teams should be loaded");
         
         // 2. Fixtures should be generated
         List<Match> allMatches = matchRepository.findAll();
@@ -56,7 +56,7 @@ class SimulationServiceTest {
         Match m = playedMatches.get(0);
         assertNotNull(m.getHomeGoals());
         assertNotNull(m.getAwayGoals());
-        System.out.println("Match result: " + m.getHomeTeam().getName() + " " + m.getHomeGoals() + 
-                " - " + m.getAwayGoals() + " " + m.getAwayTeam().getName());
+        System.out.println("Match result: " + m.getHomeTeam().getNombre() + " " + m.getHomeGoals() + 
+                " - " + m.getAwayGoals() + " " + m.getAwayTeam().getNombre());
     }
 }

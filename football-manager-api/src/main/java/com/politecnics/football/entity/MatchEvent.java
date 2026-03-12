@@ -31,6 +31,6 @@ public class MatchEvent {
     private Integer minute;
     
     public enum EventType {
-        GOAL, ASSIST, YELLOW_CARD, RED_CARD
+        GOAL, ASSIST, YELLOW_CARD, RED_CARD, INJURY, SUBSTITUTION
     }
 }

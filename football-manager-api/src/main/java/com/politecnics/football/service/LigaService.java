@@ -56,7 +56,7 @@ public class LigaService {
         
         for (Match match : matchesJornada) {
             if (!match.isPlayed()) {
-                matchEngine.simulateMatch(match);
+                matchEngine.simulateMatch(match, null);
                 matchRepository.save(match);
             }
         }

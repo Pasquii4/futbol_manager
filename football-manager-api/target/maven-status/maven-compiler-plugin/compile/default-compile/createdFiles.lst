@@ -17,13 +17,16 @@ com\politecnics\football\dto\MatchEventDTO.class
 com\politecnics\football\dto\JugadorDTO.class
 com\politecnics\football\service\FixtureGenerator.class
 com\politecnics\football\repository\SeasonRepository.class
+com\politecnics\football\service\simulation\MatchResult$MatchResultBuilder.class
 com\politecnics\football\dto\TacticaDTO.class
 com\politecnics\football\entity\MatchEvent$EventType.class
 com\politecnics\football\FootballManagerApplication.class
 com\politecnics\football\service\JugadorService.class
 com\politecnics\football\dto\ClasificacionDTO.class
+com\politecnics\football\entity\MatchStats.class
 com\politecnics\football\exception\GlobalExceptionHandler.class
 com\politecnics\football\dto\LeagueStatusDTO.class
+com\politecnics\football\service\simulation\FullSimEngine.class
 com\politecnics\football\controller\EquipoController.class
 com\politecnics\football\dto\PresupuestoDTO.class
 com\politecnics\football\entity\Jugador.class
@@ -37,6 +40,8 @@ com\politecnics\football\mapper\EntrenadorMapperImpl.class
 com\politecnics\football\service\simulation\MatchEngine.class
 com\politecnics\football\mapper\JugadorMapperImpl.class
 com\politecnics\football\dto\EquipoDTO.class
+com\politecnics\football\service\simulation\FastSimEngine.class
+com\politecnics\football\repository\MatchStatsRepository.class
 com\politecnics\football\controller\SeasonController.class
 com\politecnics\football\controller\AuthController.class
 com\politecnics\football\entity\MatchEvent$MatchEventBuilder.class
@@ -50,6 +55,7 @@ com\politecnics\football\entity\Season$SeasonBuilder.class
 com\politecnics\football\controller\StandingsController.class
 com\politecnics\football\mapper\TacticaMapper.class
 com\politecnics\football\controller\JugadorController.class
+com\politecnics\football\service\simulation\MatchResult.class
 com\politecnics\football\controller\TransferController.class
 com\politecnics\football\controller\SimulationController.class
 com\politecnics\football\controller\TeamController.class
@@ -57,6 +63,7 @@ com\politecnics\football\dto\EntrenadorDTO.class
 com\politecnics\football\repository\LeagueRepository.class
 com\politecnics\football\service\simulation\MatchState.class
 com\politecnics\football\dto\ErrorResponse$ErrorResponseBuilder.class
+com\politecnics\football\entity\MatchStats$MatchStatsBuilder.class
 com\politecnics\football\service\StatsUpdateService.class
 com\politecnics\football\dto\PlayerDTO$PlayerDTOBuilder.class
 com\politecnics\football\dto\StandingsDTO.class
@@ -95,8 +102,11 @@ com\politecnics\football\dto\TeamDTO.class
 com\politecnics\football\dto\EstadisticasJugadorDTO.class
 com\politecnics\football\mapper\TacticaMapperImpl.class
 com\politecnics\football\entity\Tactica.class
+com\politecnics\football\service\simulation\FullSimEngine$1.class
 com\politecnics\football\dto\MatchDTO$MatchDTOBuilder.class
 com\politecnics\football\dto\PlayerDTO.class
+com\politecnics\football\service\simulation\SimEngine.class
+com\politecnics\football\service\simulation\OpportunityType.class
 com\politecnics\football\config\SecurityConfig.class
 com\politecnics\football\mapper\JugadorMapper.class
 com\politecnics\football\repository\MatchRepository.class

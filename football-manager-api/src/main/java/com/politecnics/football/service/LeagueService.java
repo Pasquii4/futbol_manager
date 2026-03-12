@@ -37,7 +37,7 @@ public class LeagueService {
         // 3. Simulate each match
         for (Match match : matches) {
             if (!match.isPlayed()) {
-                matchEngine.simulateMatch(match);
+                matchEngine.simulateMatch(match, null);
                 matchRepository.save(match);
                 
                 // 4. Update Jugador Stats immediately (or could be done in batch)

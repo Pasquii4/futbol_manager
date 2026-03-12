@@ -94,7 +94,12 @@ public class DataLoadService {
             entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
 
             log.info("Cleaning all tables...");
-            String[] tables = {"match_events", "matches", "jugadores", "teams", "leagues", "seasons"};
+            String[] tables = {
+                "match_events", "match_stats", "matches", 
+                "lesiones", "estadisticas_jugador", "jugadores", 
+                "equipos", "tacticas", "entrenadores", 
+                "ligas", "leagues", "seasons"
+            };
             for (String table : tables) {
                 try {
                     entityManager.createNativeQuery("TRUNCATE TABLE " + table).executeUpdate();
@@ -189,21 +194,21 @@ public class DataLoadService {
                 if (equipo == null) {
                     equipo = Equipo.builder()
                             .teamId(teamId)
-                            .nombre((String) teamData.get("nombre"))
+                            .nombre((String) teamData.get("name"))
                             .estadio((String) teamData.get("stadium"))
                             .calidadRating(mapToInt(teamData.get("overallRating")))
                             .build();
                     equipo.setBudget(mapToLong(teamData.get("budget")));
                     teamsLoaded++;
                 } else {
-                    equipo.setNombre((String) teamData.get("nombre"));
+                    equipo.setNombre((String) teamData.get("name"));
                     equipo.setBudget(mapToLong(teamData.get("budget")));
                 }
                 equipo = equipoRepository.save(equipo);
 
                 // Load Players for this team
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> playersData = (List<Map<String, Object>>) teamData.get("jugadores");
+                List<Map<String, Object>> playersData = (List<Map<String, Object>>) teamData.get("players");
                 if (playersData != null) {
                     for (Map<String, Object> playerData : playersData) {
                         String playerId = (String) playerData.get("id");
@@ -213,7 +218,7 @@ public class DataLoadService {
                             jugador = Jugador.builder()
                                     .jugadorId(playerId)
                                     .nombre((String) playerData.get("name"))
-                                    .posicion(com.politecnics.football.entity.Posicion.POR) // Default to compile
+                                    .posicion(mapPosition((String) playerData.get("position")))
                                     .fechaNacimiento(java.time.LocalDate.now().minusYears(mapToInt(playerData.get("age"))))
                                     .calidad((double) mapToInt(playerData.get("overall")))
                                     .marketValue(mapToLong(playerData.getOrDefault("marketValue", 0)))
@@ -305,5 +310,16 @@ public class DataLoadService {
             if (val instanceof String) return Long.parseLong((String) val);
         } catch (NumberFormatException e) { /* ignored */ }
         return 0L;
+    }
+
+    private com.politecnics.football.entity.Posicion mapPosition(String pos) {
+        if (pos == null) return com.politecnics.football.entity.Posicion.MIG;
+        return switch (pos.toUpperCase()) {
+            case "GK" -> com.politecnics.football.entity.Posicion.POR;
+            case "RB", "LB", "CB", "RWB", "LWB" -> com.politecnics.football.entity.Posicion.DEF;
+            case "CDM", "CM", "CAM", "RM", "LM" -> com.politecnics.football.entity.Posicion.MIG;
+            case "RW", "LW", "ST", "CF" -> com.politecnics.football.entity.Posicion.DAV;
+            default -> com.politecnics.football.entity.Posicion.MIG;
+        };
     }
 }

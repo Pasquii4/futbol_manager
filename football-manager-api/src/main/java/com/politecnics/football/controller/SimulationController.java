@@ -37,6 +37,14 @@ public class SimulationController {
     }
 
     /**
+     * POST /api/simulate/advance-matchday - Alias for matchday advance, per Phase 1 specs
+     */
+    @PostMapping("/advance-matchday")
+    public ResponseEntity<String> advanceMatchday() {
+        return simulateMatchday();
+    }
+
+    /**
      * POST /api/simulate/season - Simulates all remaining matchdays.
      */
     @PostMapping("/season")

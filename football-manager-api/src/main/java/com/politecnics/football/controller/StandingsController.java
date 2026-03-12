@@ -51,6 +51,10 @@ public class StandingsController {
 
         // Calculate stats
         for (Match match : matches) {
+            if (match.getHomeTeam() == null || match.getAwayTeam() == null) {
+                continue;
+            }
+            
             if (!standingsMap.containsKey(match.getHomeTeam().getId()) || !standingsMap.containsKey(match.getAwayTeam().getId())) {
                 continue;
             }
