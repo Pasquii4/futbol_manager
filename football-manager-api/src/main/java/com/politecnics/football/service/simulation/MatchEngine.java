@@ -60,11 +60,12 @@ public class MatchEngine {
         
         // Persistir eventos
         if (result.getEvents() != null) {
+            match.getEvents().clear();
             result.getEvents().forEach(e -> {
                 e.setMatch(match);
+                match.getEvents().add(e);
                 matchEventRepository.save(e);
             });
-            match.setEvents(result.getEvents());
         }
         
         // Actualizar forma y curar lesiones (las lesiones nuevas se generan por evento)

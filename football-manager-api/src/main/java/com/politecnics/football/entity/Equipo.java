@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
-@Table(name = "equipos")
+@Table(name = "teams")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,10 +16,10 @@ public class Equipo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String nombre;
 
-    @Column(unique = true)
+    @Column(name = "team_id", unique = true)
     private String teamId;
 
     private Integer anyFundacion;

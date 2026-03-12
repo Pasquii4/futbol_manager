@@ -3,7 +3,6 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\service\simulation\MatchResult.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\Entrenador.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\mapper\LigaMapper.java
-C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\League.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\service\simulation\SimEngine.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\JugadorDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\FootballManagerApplication.java
@@ -24,7 +23,6 @@ C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\LigaDTO.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\config\SecurityConfig.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\EntrenadorDTO.java
-C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\repository\LeagueRepository.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\dto\ErrorResponse.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\controller\PlayerController.java
 C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\java\com\politecnics\football\entity\Lesion.java

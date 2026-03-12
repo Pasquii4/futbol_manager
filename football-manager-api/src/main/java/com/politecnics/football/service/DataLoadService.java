@@ -87,7 +87,7 @@ public class DataLoadService {
      */
     @Transactional
     public void resetLeagueData() {
-        log.info("=== Resetting League Data (Native Truncate) ===");
+        log.info("=== Resetting League Data (Native DELETE) ===");
 
         try {
             // Disable foreign key checks for a clean wipe
@@ -96,15 +96,15 @@ public class DataLoadService {
             log.info("Cleaning all tables...");
             String[] tables = {
                 "match_events", "match_stats", "matches", 
-                "lesiones", "estadisticas_jugador", "jugadores", 
-                "equipos", "tacticas", "entrenadores", 
-                "ligas", "leagues", "seasons"
+                "lesiones", "estadisticas_jugador", "players", 
+                "teams", "tacticas", "entrenadores", 
+                "leagues", "seasons", "users"
             };
             for (String table : tables) {
                 try {
-                    entityManager.createNativeQuery("TRUNCATE TABLE " + table).executeUpdate();
+                    entityManager.createNativeQuery("DELETE FROM " + table).executeUpdate();
                 } catch (Exception e) {
-                    log.warn("Could not truncate table '{}' (may not exist yet): {}", table, e.getMessage());
+                    log.warn("Could not delete from table '{}' (may not exist yet): {}", table, e.getMessage());
                 }
             }
 
@@ -197,12 +197,14 @@ public class DataLoadService {
                             .nombre((String) teamData.get("name"))
                             .estadio((String) teamData.get("stadium"))
                             .calidadRating(mapToInt(teamData.get("overallRating")))
+                            .liga(league)
                             .build();
                     equipo.setBudget(mapToLong(teamData.get("budget")));
                     teamsLoaded++;
                 } else {
                     equipo.setNombre((String) teamData.get("name"));
                     equipo.setBudget(mapToLong(teamData.get("budget")));
+                    equipo.setLiga(league);
                 }
                 equipo = equipoRepository.save(equipo);
 
@@ -266,6 +268,7 @@ public class DataLoadService {
                                     .awayGoals(mapToInt(matchData.get("awayGoals")))
                                     .played((Boolean) matchData.get("played"))
                                     .matchDate(dateTime.toLocalDate())
+                                    .liga(league)
                                     .build();
                             matchRepository.save(match);
                             matchCount++;

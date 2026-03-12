@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "jugadores")
+@Table(name = "players")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,9 +16,10 @@ public class Jugador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(name = "player_id", unique = true)
     private String jugadorId; // String ID from JSON
 
+    @Column(name = "name")
     private String nombre;
     private String apellido;
     private LocalDate fechaNacimiento;

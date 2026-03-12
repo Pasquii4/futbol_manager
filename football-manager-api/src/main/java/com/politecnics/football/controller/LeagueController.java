@@ -21,7 +21,7 @@ public class LeagueController {
     private MatchRepository matchRepository;
 
     @Autowired
-    private com.politecnics.football.repository.LeagueRepository leagueRepository;
+    private com.politecnics.football.repository.LigaRepository ligaRepository;
 
     @Autowired
     private com.politecnics.football.service.DataLoadService dataLoadService;
@@ -59,7 +59,7 @@ public class LeagueController {
         // Logic: if all played, we are at "End of Season".
 
         // Fetch basic league info dynamically
-        com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        com.politecnics.football.entity.Liga league = ligaRepository.findAll().stream().findFirst().orElse(null);
         Long managedTeamId = league != null ? league.getManagedTeamId() : null;
         int seasonYear = league != null && league.getSeasonYear() != null ? league.getSeasonYear() : 2025;
 
@@ -88,20 +88,20 @@ public class LeagueController {
     @Transactional
     public ResponseEntity<String> selectTeam(@PathVariable Long teamId) {
         // Implement logic to set managedTeamId on the active league
-        com.politecnics.football.entity.League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        com.politecnics.football.entity.Liga league = ligaRepository.findAll().stream().findFirst().orElse(null);
         
         if (league == null) {
             // This case should rarely happen if data is initialized
-            league = com.politecnics.football.entity.League.builder()
-                .name("LaLiga EA Sports")
+            league = com.politecnics.football.entity.Liga.builder()
+                .nombre("LaLiga EA Sports")
                 .country("Spain")
                 .seasonYear(2025) 
                 .build();
-            league = leagueRepository.save(league);
+            league = ligaRepository.save(league);
         }
         
         league.setManagedTeamId(teamId);
-        leagueRepository.save(league);
+        ligaRepository.save(league);
         return ResponseEntity.ok("Equipo selected successfully");
     }
 }

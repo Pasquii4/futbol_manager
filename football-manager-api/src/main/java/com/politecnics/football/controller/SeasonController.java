@@ -37,7 +37,7 @@ public class SeasonController {
     private JugadorRepository jugadorRepository;
 
     @Autowired
-    private LeagueRepository leagueRepository;
+    private LigaRepository ligaRepository;
 
     @Autowired
     private DataLoadService dataLoadService;
@@ -91,7 +91,7 @@ public class SeasonController {
         }
 
         // 4. Get season year
-        League league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        Liga league = ligaRepository.findAll().stream().findFirst().orElse(null);
         int seasonYear = league != null && league.getSeasonYear() != null ? league.getSeasonYear() : 2025;
 
         // 5. Serialize standings snapshot
@@ -117,10 +117,10 @@ public class SeasonController {
         dataLoadService.resetLeagueData();
 
         // 8. Update season year
-        league = leagueRepository.findAll().stream().findFirst().orElse(null);
+        league = ligaRepository.findAll().stream().findFirst().orElse(null);
         if (league != null) {
             league.setSeasonYear(seasonYear + 1);
-            leagueRepository.save(league);
+            ligaRepository.save(league);
         }
 
         return ResponseEntity.ok("New season " + (seasonYear + 1) + " started. Previous champion: " + champion);

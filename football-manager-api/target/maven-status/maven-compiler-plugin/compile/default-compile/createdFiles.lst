@@ -1,11 +1,9 @@
 com\politecnics\football\entity\Jugador$JugadorBuilder.class
 com\politecnics\football\service\LeagueService.class
-com\politecnics\football\entity\League.class
 com\politecnics\football\mapper\LigaMapper.class
 com\politecnics\football\entity\Entrenador.class
 com\politecnics\football\service\EquipoService.class
 com\politecnics\football\entity\MatchEvent.class
-com\politecnics\football\entity\League$LeagueBuilder.class
 com\politecnics\football\service\LeagueService$1.class
 com\politecnics\football\entity\EstadisticasJugador$EstadisticasJugadorBuilder.class
 com\politecnics\football\config\OpenApiConfig.class
@@ -60,7 +58,6 @@ com\politecnics\football\controller\TransferController.class
 com\politecnics\football\controller\SimulationController.class
 com\politecnics\football\controller\TeamController.class
 com\politecnics\football\dto\EntrenadorDTO.class
-com\politecnics\football\repository\LeagueRepository.class
 com\politecnics\football\service\simulation\MatchState.class
 com\politecnics\football\dto\ErrorResponse$ErrorResponseBuilder.class
 com\politecnics\football\entity\MatchStats$MatchStatsBuilder.class
