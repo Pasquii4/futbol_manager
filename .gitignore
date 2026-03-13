@@ -1,4 +1,5 @@
 .venv
+.venv
 .tools
 
 *.log
@@ -7,3 +8,10 @@ backend.log
 jugadors.json
 jugadors_con_fotos.json
 login.json
+
+# Añadir al .gitignore
+football-manager-api/target/
+football-manager-api/data/*.db
+football-manager-api/data/*.trace.db
+compile_errors.txt
+football-manager-api/target/classes/data/
