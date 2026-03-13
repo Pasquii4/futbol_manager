@@ -3,8 +3,10 @@ import random
 import os
 
 # Configuration
-INPUT_FILE = r'C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\jugadors.json'
-OUTPUT_FILE = r'C:\Users\CEP-MATI\Documents\GitHub\futbol_manager\football-manager-api\src\main\resources\data\laliga_db.json'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+INPUT_FILE = os.path.join(PROJECT_ROOT, 'football-manager-api', 'src', 'main', 'resources', 'data', 'jugadors.json')
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, 'football-manager-api', 'src', 'main', 'resources', 'data', 'laliga_db.json')
 
 # Team Metadata (augmenting jugadors.json)
 TEAM_METADATA = {

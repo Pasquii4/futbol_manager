@@ -5,7 +5,6 @@ import { getMatch, Match } from '@/lib/api';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { getMatch, Match } from '@/lib/api';
 
 export default function MatchDetailsPage() {
     const params = useParams();
